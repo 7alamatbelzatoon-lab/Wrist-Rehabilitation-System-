@@ -1,0 +1,142 @@
+<?xml version="1.0"?>
+<robot name="dual_wrist">
+
+  <!-- Fixed base (slim post) -->
+  <link name="base_link">
+    <visual>
+      <geometry><box size="0.02 0.50 0.02"/></geometry>
+      <material name="grey"><color rgba="0.5 0.5 0.5 1.0"/></material>
+    </visual>
+  </link>
+
+  <!-- ======= shared materials ======= -->
+  <material name="skin"><color rgba="0.95 0.80 0.65 1.0"/></material>
+  <material name="accent_green"><color rgba="0.0 0.8 0.0 1.0"/></material>
+  <material name="accent_orange"><color rgba="1.0 0.55 0.0 1.0"/></material>
+  <material name="accent_red"><color rgba="0.9 0.15 0.15 1.0"/></material>
+  <material name="accent_yellow"><color rgba="0.97 0.90 0.10 1.0"/></material>
+
+  <!-- ==================== DOCTOR ARM ==================== -->
+  <link name="forearm_doc">
+    <!-- capsule: cylinder + spheres, oriented along +X -->
+    <visual>
+      <origin rpy="0 1.5708 0"/>
+      <geometry><cylinder length="0.28" radius="0.042"/></geometry>
+      <material name="skin"/>
+    </visual>
+    <visual>
+      <origin xyz="0.14 0 0"/>
+      <geometry><sphere radius="0.042"/></geometry>
+      <material name="skin"/>
+    </visual>
+    <visual>
+      <origin xyz="-0.14 0 0"/>
+      <geometry><sphere radius="0.042"/></geometry>
+      <material name="skin"/>
+    </visual>
+  </link>
+
+  <joint name="forearm_doc_fixed" type="fixed">
+    <parent link="base_link"/>
+    <child link="forearm_doc"/>
+    <origin xyz="0.0 0.20 0.0" rpy="0 0 0"/>
+  </joint>
+
+  <link name="wrist_doc">
+    <!-- small green cuff -->
+    <visual>
+      <geometry><box size="0.07 0.07 0.07"/></geometry>
+      <material name="accent_green"/>
+    </visual>
+  </link>
+
+  <joint name="wrist_doc_fixed" type="fixed">
+    <parent link="forearm_doc"/>
+    <child link="wrist_doc"/>
+    <origin xyz="0.15 0.0 0.0" rpy="0 0 0"/>
+  </joint>
+
+  <link name="hand_doc">
+    <!-- palm -->
+    <visual>
+      <origin xyz="0.08 0 0"/>
+      <geometry><box size="0.16 0.07 0.02"/></geometry>
+      <material name="skin"/>
+    </visual>
+    <!-- fingers -->
+    <visual><origin xyz="0.16  0.022 0"/><geometry><box size="0.08 0.014 0.014"/></geometry><material name="skin"/></visual>
+    <visual><origin xyz="0.16  0.007 0"/><geometry><box size="0.08 0.014 0.014"/></geometry><material name="skin"/></visual>
+    <visual><origin xyz="0.16 -0.008 0"/><geometry><box size="0.08 0.014 0.014"/></geometry><material name="skin"/></visual>
+    <visual><origin xyz="0.16 -0.023 0"/><geometry><box size="0.08 0.014 0.014"/></geometry><material name="skin"/></visual>
+    <!-- thumb -->
+    <visual>
+      <origin xyz="0.06 -0.05 0" rpy="0 0 0.35"/>
+      <geometry><box size="0.06 0.02 0.02"/></geometry>
+      <material name="skin"/>
+    </visual>
+  </link>
+
+  <joint name="wrist_joint_doc" type="revolute">
+    <parent link="wrist_doc"/>
+    <child link="hand_doc"/>
+    <origin xyz="0.05 0.0 0.0" rpy="0 0 0"/>
+    <axis xyz="0 0 1"/>
+    <limit lower="-1.57" upper="1.57" effort="10" velocity="1.0"/>
+  </joint>
+
+  <!-- ==================== PATIENT ARM ==================== -->
+  <link name="forearm_pat">
+    <visual>
+      <origin rpy="0 1.5708 0"/>
+      <geometry><cylinder length="0.28" radius="0.042"/></geometry>
+      <material name="skin"/>
+    </visual>
+    <visual><origin xyz="0.14 0 0"/><geometry><sphere radius="0.042"/></geometry><material name="skin"/></visual>
+    <visual><origin xyz="-0.14 0 0"/><geometry><sphere radius="0.042"/></geometry><material name="skin"/></visual>
+  </link>
+
+  <joint name="forearm_pat_fixed" type="fixed">
+    <parent link="base_link"/>
+    <child link="forearm_pat"/>
+    <origin xyz="0.0 -0.20 0.0" rpy="0 0 0"/>
+  </joint>
+
+  <link name="wrist_pat">
+    <visual>
+      <geometry><box size="0.07 0.07 0.07"/></geometry>
+      <material name="accent_green"/>
+    </visual>
+  </link>
+
+  <joint name="wrist_pat_fixed" type="fixed">
+    <parent link="forearm_pat"/>
+    <child link="wrist_pat"/>
+    <origin xyz="0.15 0.0 0.0" rpy="0 0 0"/>
+  </joint>
+
+  <link name="hand_pat">
+    <visual>
+      <origin xyz="0.08 0 0"/>
+      <geometry><box size="0.16 0.07 0.02"/></geometry>
+      <material name="skin"/>
+    </visual>
+    <visual><origin xyz="0.16  0.022 0"/><geometry><box size="0.08 0.014 0.014"/></geometry><material name="skin"/></visual>
+    <visual><origin xyz="0.16  0.007 0"/><geometry><box size="0.08 0.014 0.014"/></geometry><material name="skin"/></visual>
+    <visual><origin xyz="0.16 -0.008 0"/><geometry><box size="0.08 0.014 0.014"/></geometry><material name="skin"/></visual>
+    <visual><origin xyz="0.16 -0.023 0"/><geometry><box size="0.08 0.014 0.014"/></geometry><material name="skin"/></visual>
+    <visual>
+      <origin xyz="0.06 -0.05 0" rpy="0 0 0.35"/>
+      <geometry><box size="0.06 0.02 0.02"/></geometry>
+      <material name="skin"/>
+    </visual>
+  </link>
+
+  <joint name="wrist_joint_pat" type="revolute">
+    <parent link="wrist_pat"/>
+    <child link="hand_pat"/>
+    <origin xyz="0.05 0.0 0.0" rpy="0 0 0"/>
+    <axis xyz="0 0 1"/>
+    <limit lower="-1.57" upper="1.57" effort="10" velocity="1.0"/>
+  </joint>
+
+</robot>

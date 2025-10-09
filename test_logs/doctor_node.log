@@ -1,0 +1,24 @@
+[INFO] [1759780631.826827186] [doctor_node]: Doctor Node initiated!
+[INFO] [1759780632.553266552] [doctor_node]: [Doctor] 🧠 Published target: 0.00°
+[INFO] [1759780633.572698485] [doctor_node]: [Doctor] 🧠 Published target: 5.00°
+[INFO] [1759780634.550571801] [doctor_node]: [Doctor] 🧠 Published target: 10.00°
+[INFO] [1759780635.549790901] [doctor_node]: [Doctor] 🧠 Published target: 15.00°
+[INFO] [1759780636.556974311] [doctor_node]: [Doctor] 🧠 Published target: 20.00°
+[INFO] [1759780637.550464303] [doctor_node]: [Doctor] 🧠 Published target: 25.00°
+[INFO] [1759780638.558175489] [doctor_node]: [Doctor] 🧠 Published target: 30.00°
+[INFO] [1759780639.547646761] [doctor_node]: [Doctor] 🧠 Published target: 35.00°
+[INFO] [1759780640.549809118] [doctor_node]: [Doctor] 🧠 Published target: 40.00°
+[INFO] [1759780641.552490809] [doctor_node]: [Doctor] 🧠 Published target: 45.00°
+[INFO] [1759780642.548737398] [doctor_node]: [Doctor] 🧠 Published target: 50.00°
+[INFO] [1759780643.546764410] [doctor_node]: [Doctor] 🧠 Published target: 55.00°
+[INFO] [1759780644.552891598] [doctor_node]: [Doctor] 🧠 Published target: 60.00°
+[INFO] [1759780645.550650145] [doctor_node]: [Doctor] 🧠 Published target: 65.00°
+[INFO] [1759780646.556306033] [doctor_node]: [Doctor] 🧠 Published target: 70.00°
+[INFO] [1759780647.546958806] [doctor_node]: [Doctor] 🧠 Published target: 70.00°
+[INFO] [1759780648.551834423] [doctor_node]: [Doctor] 🧠 Published target: 65.00°
+[INFO] [1759780649.551144164] [doctor_node]: [Doctor] 🧠 Published target: 60.00°
+[INFO] [1759780650.556707198] [doctor_node]: [Doctor] 🧠 Published target: 55.00°
+[INFO] [1759780651.552491799] [doctor_node]: [Doctor] 🧠 Published target: 50.00°
+[INFO] [1759780652.547436497] [doctor_node]: [Doctor] 🧠 Published target: 45.00°
+[INFO] [1759780653.546797482] [doctor_node]: [Doctor] 🧠 Published target: 40.00°
+python3: ./.obj-x86_64-linux-gnu/rosidl_generator_py/std_msgs/msg/_float32_s.c:58: std_msgs__msg__float32__convert_from_py: Assertion `PyFloat_Check(field)' failed.

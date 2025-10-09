@@ -1,0 +1,5 @@
+[console_scripts]
+patient_motion_anomaly_handler = patient_engine.nodes.patient_motion_anomaly_handler.py:main
+patient_mqtt_bridge = patient_engine.nodes.patient_mqtt_bridge:main
+patient_network_anomaly_handler = patient_engine.nodes.patient_network_anomaly_handler:main
+patient_node = patient_engine.nodes.patient_node:main

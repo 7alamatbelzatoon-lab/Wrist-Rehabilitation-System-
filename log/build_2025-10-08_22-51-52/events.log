@@ -1,0 +1,163 @@
+[0.000000] (-) TimerEvent: {}
+[0.004754] (doctor_engine) JobQueued: {'identifier': 'doctor_engine', 'dependencies': OrderedDict()}
+[0.004815] (patient_engine) JobQueued: {'identifier': 'patient_engine', 'dependencies': OrderedDict()}
+[0.004853] (wrist_replay) JobQueued: {'identifier': 'wrist_replay', 'dependencies': OrderedDict()}
+[0.004885] (doctor_engine) JobStarted: {'identifier': 'doctor_engine'}
+[0.024373] (patient_engine) JobStarted: {'identifier': 'patient_engine'}
+[0.048579] (wrist_replay) JobStarted: {'identifier': 'wrist_replay'}
+[0.099214] (-) TimerEvent: {}
+[0.200356] (-) TimerEvent: {}
+[0.302934] (-) TimerEvent: {}
+[0.403253] (-) TimerEvent: {}
+[0.504607] (-) TimerEvent: {}
+[0.608603] (-) TimerEvent: {}
+[0.708912] (-) TimerEvent: {}
+[0.813693] (-) TimerEvent: {}
+[0.915370] (-) TimerEvent: {}
+[1.016511] (-) TimerEvent: {}
+[1.130984] (-) TimerEvent: {}
+[1.232312] (-) TimerEvent: {}
+[1.335827] (-) TimerEvent: {}
+[1.437113] (-) TimerEvent: {}
+[1.538964] (-) TimerEvent: {}
+[1.639560] (-) TimerEvent: {}
+[1.743022] (-) TimerEvent: {}
+[1.844568] (-) TimerEvent: {}
+[1.948602] (-) TimerEvent: {}
+[2.050743] (-) TimerEvent: {}
+[2.151894] (-) TimerEvent: {}
+[2.258734] (-) TimerEvent: {}
+[2.359175] (-) TimerEvent: {}
+[2.459814] (-) TimerEvent: {}
+[2.561020] (-) TimerEvent: {}
+[2.662381] (-) TimerEvent: {}
+[2.767624] (-) TimerEvent: {}
+[2.868071] (-) TimerEvent: {}
+[2.968659] (-) TimerEvent: {}
+[3.069730] (-) TimerEvent: {}
+[3.170300] (-) TimerEvent: {}
+[3.272779] (-) TimerEvent: {}
+[3.373167] (-) TimerEvent: {}
+[3.474615] (-) TimerEvent: {}
+[3.576501] (-) TimerEvent: {}
+[3.677686] (-) TimerEvent: {}
+[3.778376] (-) TimerEvent: {}
+[3.878792] (-) TimerEvent: {}
+[3.982441] (-) TimerEvent: {}
+[4.087221] (-) TimerEvent: {}
+[4.190475] (-) TimerEvent: {}
+[4.292853] (-) TimerEvent: {}
+[4.401284] (-) TimerEvent: {}
+[4.503336] (-) TimerEvent: {}
+[4.603969] (-) TimerEvent: {}
+[4.704576] (-) TimerEvent: {}
+[4.807490] (-) TimerEvent: {}
+[4.907862] (-) TimerEvent: {}
+[5.010882] (-) TimerEvent: {}
+[5.113659] (-) TimerEvent: {}
+[5.214643] (-) TimerEvent: {}
+[5.315216] (-) TimerEvent: {}
+[5.415817] (-) TimerEvent: {}
+[5.518374] (-) TimerEvent: {}
+[5.578113] (patient_engine) Command: {'cmd': ['/usr/bin/python3', '-W', 'ignore:setup.py install is deprecated', '-W', 'ignore:easy_install command is deprecated', 'setup.py', 'egg_info', '--egg-base', '../../build/patient_engine', 'build', '--build-base', '/home/anas/ros2_ws/build/patient_engine/build', 'install', '--record', '/home/anas/ros2_ws/build/patient_engine/install.log', '--single-version-externally-managed', 'install_data'], 'cwd': '/home/anas/ros2_ws/src/patient_engine', 'env': {'LESSOPEN': '| /usr/bin/lesspipe %s', 'USER': 'anas', 'XDG_SESSION_TYPE': 'wayland', 'CLUTTER_DISABLE_MIPMAPPED_TEXT': '1', 'SHLVL': '1', 'LD_LIBRARY_PATH': '/opt/ros/jazzy/opt/rviz_ogre_vendor/lib:/opt/ros/jazzy/lib/x86_64-linux-gnu:/opt/ros/jazzy/opt/gz_math_vendor/lib:/opt/ros/jazzy/opt/gz_utils_vendor/lib:/opt/ros/jazzy/opt/gz_cmake_vendor/lib:/opt/ros/jazzy/lib', 'HOME': '/home/anas', 'OLDPWD': '/home/anas/ros2_ws/test_logs', 'DESKTOP_SESSION': 'ubuntu', 'ROS_PYTHON_VERSION': '3', 'GNOME_SHELL_SESSION_MODE': 'ubuntu', 'GTK_MODULES': 'gail:atk-bridge', 'SYSTEMD_EXEC_PID': '2369', 'GSM_SKIP_SSH_AGENT_WORKAROUND': 'true', 'DBUS_SESSION_BUS_ADDRESS': 'unix:path=/run/user/1000/bus', 'COLORTERM': 'truecolor', 'DEBUGINFOD_URLS': 'https://debuginfod.ubuntu.com', 'IM_CONFIG_PHASE': '1', 'WAYLAND_DISPLAY': 'wayland-0', 'COLCON_PREFIX_PATH': '/home/anas/ros2_ws/install', 'ROS_DISTRO': 'jazzy', 'LOGNAME': 'anas', '_': '/usr/bin/colcon', 'ROS_VERSION': '2', 'MEMORY_PRESSURE_WATCH': '/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/session.slice/org.gnome.Shell@wayland.service/memory.pressure', 'XDG_SESSION_CLASS': 'user', 'USERNAME': 'anas', 'TERM': 'xterm-256color', 'GNOME_DESKTOP_SESSION_ID': 'this-is-deprecated', 'PATH': '/opt/ros/jazzy/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/snap/bin', 'SESSION_MANAGER': 'local/anas-vm:@/tmp/.ICE-unix/2334,unix/anas-vm:/tmp/.ICE-unix/2334', 'XDG_MENU_PREFIX': 'gnome-', 'GNOME_TERMINAL_SCREEN': '/org/gnome/Terminal/screen/71a6ae7a_2300_42ac_9983_07611b2254d2', 'GNOME_SETUP_DISPLAY': ':1', 'XDG_RUNTIME_DIR': '/run/user/1000', 'DISPLAY': ':0', 'LANG': 'en_US.UTF-8', 'XDG_CURRENT_DESKTOP': 'ubuntu:GNOME', 'XMODIFIERS': '@im=ibus', 'XDG_SESSION_DESKTOP': 'ubuntu', 'XAUTHORITY': '/run/user/1000/.mutter-Xwaylandauth.YHHAE3', 'LS_COLORS': 'rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=00:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.avif=01;35:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.webp=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:*~=00;90:*#=00;90:*.bak=00;90:*.crdownload=00;90:*.dpkg-dist=00;90:*.dpkg-new=00;90:*.dpkg-old=00;90:*.dpkg-tmp=00;90:*.old=00;90:*.orig=00;90:*.part=00;90:*.rej=00;90:*.rpmnew=00;90:*.rpmorig=00;90:*.rpmsave=00;90:*.swp=00;90:*.tmp=00;90:*.ucf-dist=00;90:*.ucf-new=00;90:*.ucf-old=00;90:', 'GNOME_TERMINAL_SERVICE': ':1.108', 'SSH_AUTH_SOCK': '/run/user/1000/keyring/ssh', 'AMENT_PREFIX_PATH': '/home/anas/ros2_ws/install/wrist_replay:/home/anas/ros2_ws/install/patient_engine:/home/anas/ros2_ws/install/doctor_engine:/opt/ros/jazzy', 'SHELL': '/bin/bash', 'QT_ACCESSIBILITY': '1', 'GDMSESSION': 'ubuntu', 'LESSCLOSE': '/usr/bin/lesspipe %s %s', 'ROS_AUTOMATIC_DISCOVERY_RANGE': 'SUBNET', 'QT_IM_MODULE': 'ibus', 'PWD': '/home/anas/ros2_ws/build/patient_engine', 'LC_ALL': 'en_US.UTF-8', 'XDG_CONFIG_DIRS': '/etc/xdg/xdg-ubuntu:/etc/xdg', 'XDG_DATA_DIRS': '/usr/share/ubuntu:/usr/share/gnome:/usr/local/share/:/usr/share/:/var/lib/snapd/desktop', 'PYTHONPATH': '/home/anas/ros2_ws/build/patient_engine/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/anas/ros2_ws/install/patient_engine/lib/python3.12/site-packages:/home/anas/ros2_ws/install/wrist_replay/lib/python3.12/site-packages:/home/anas/ros2_ws/install/patient_engine/lib/python3.12/site-packages:/home/anas/ros2_ws/install/doctor_engine/lib/python3.12/site-packages:/opt/ros/jazzy/lib/python3.12/site-packages', 'COLCON': '1', 'MEMORY_PRESSURE_WRITE': 'c29tZSAyMDAwMDAgMjAwMDAwMAA=', 'VTE_VERSION': '7600', 'CMAKE_PREFIX_PATH': '/opt/ros/jazzy/opt/gz_math_vendor:/opt/ros/jazzy/opt/gz_utils_vendor:/opt/ros/jazzy/opt/gz_cmake_vendor'}, 'shell': False}
+[5.628804] (-) TimerEvent: {}
+[5.731187] (-) TimerEvent: {}
+[5.794717] (doctor_engine) Command: {'cmd': ['/usr/bin/python3', '-W', 'ignore:setup.py install is deprecated', '-W', 'ignore:easy_install command is deprecated', 'setup.py', 'egg_info', '--egg-base', '../../build/doctor_engine', 'build', '--build-base', '/home/anas/ros2_ws/build/doctor_engine/build', 'install', '--record', '/home/anas/ros2_ws/build/doctor_engine/install.log', '--single-version-externally-managed', 'install_data'], 'cwd': '/home/anas/ros2_ws/src/doctor_engine', 'env': {'LESSOPEN': '| /usr/bin/lesspipe %s', 'USER': 'anas', 'XDG_SESSION_TYPE': 'wayland', 'CLUTTER_DISABLE_MIPMAPPED_TEXT': '1', 'SHLVL': '1', 'LD_LIBRARY_PATH': '/opt/ros/jazzy/opt/rviz_ogre_vendor/lib:/opt/ros/jazzy/lib/x86_64-linux-gnu:/opt/ros/jazzy/opt/gz_math_vendor/lib:/opt/ros/jazzy/opt/gz_utils_vendor/lib:/opt/ros/jazzy/opt/gz_cmake_vendor/lib:/opt/ros/jazzy/lib', 'HOME': '/home/anas', 'OLDPWD': '/home/anas/ros2_ws/test_logs', 'DESKTOP_SESSION': 'ubuntu', 'ROS_PYTHON_VERSION': '3', 'GNOME_SHELL_SESSION_MODE': 'ubuntu', 'GTK_MODULES': 'gail:atk-bridge', 'SYSTEMD_EXEC_PID': '2369', 'GSM_SKIP_SSH_AGENT_WORKAROUND': 'true', 'DBUS_SESSION_BUS_ADDRESS': 'unix:path=/run/user/1000/bus', 'COLORTERM': 'truecolor', 'DEBUGINFOD_URLS': 'https://debuginfod.ubuntu.com', 'IM_CONFIG_PHASE': '1', 'WAYLAND_DISPLAY': 'wayland-0', 'COLCON_PREFIX_PATH': '/home/anas/ros2_ws/install', 'ROS_DISTRO': 'jazzy', 'LOGNAME': 'anas', '_': '/usr/bin/colcon', 'ROS_VERSION': '2', 'MEMORY_PRESSURE_WATCH': '/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/session.slice/org.gnome.Shell@wayland.service/memory.pressure', 'XDG_SESSION_CLASS': 'user', 'USERNAME': 'anas', 'TERM': 'xterm-256color', 'GNOME_DESKTOP_SESSION_ID': 'this-is-deprecated', 'PATH': '/opt/ros/jazzy/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/snap/bin', 'SESSION_MANAGER': 'local/anas-vm:@/tmp/.ICE-unix/2334,unix/anas-vm:/tmp/.ICE-unix/2334', 'XDG_MENU_PREFIX': 'gnome-', 'GNOME_TERMINAL_SCREEN': '/org/gnome/Terminal/screen/71a6ae7a_2300_42ac_9983_07611b2254d2', 'GNOME_SETUP_DISPLAY': ':1', 'XDG_RUNTIME_DIR': '/run/user/1000', 'DISPLAY': ':0', 'LANG': 'en_US.UTF-8', 'XDG_CURRENT_DESKTOP': 'ubuntu:GNOME', 'XMODIFIERS': '@im=ibus', 'XDG_SESSION_DESKTOP': 'ubuntu', 'XAUTHORITY': '/run/user/1000/.mutter-Xwaylandauth.YHHAE3', 'LS_COLORS': 'rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=00:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.avif=01;35:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.webp=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:*~=00;90:*#=00;90:*.bak=00;90:*.crdownload=00;90:*.dpkg-dist=00;90:*.dpkg-new=00;90:*.dpkg-old=00;90:*.dpkg-tmp=00;90:*.old=00;90:*.orig=00;90:*.part=00;90:*.rej=00;90:*.rpmnew=00;90:*.rpmorig=00;90:*.rpmsave=00;90:*.swp=00;90:*.tmp=00;90:*.ucf-dist=00;90:*.ucf-new=00;90:*.ucf-old=00;90:', 'GNOME_TERMINAL_SERVICE': ':1.108', 'SSH_AUTH_SOCK': '/run/user/1000/keyring/ssh', 'AMENT_PREFIX_PATH': '/home/anas/ros2_ws/install/wrist_replay:/home/anas/ros2_ws/install/patient_engine:/home/anas/ros2_ws/install/doctor_engine:/opt/ros/jazzy', 'SHELL': '/bin/bash', 'QT_ACCESSIBILITY': '1', 'GDMSESSION': 'ubuntu', 'LESSCLOSE': '/usr/bin/lesspipe %s %s', 'ROS_AUTOMATIC_DISCOVERY_RANGE': 'SUBNET', 'QT_IM_MODULE': 'ibus', 'PWD': '/home/anas/ros2_ws/build/doctor_engine', 'LC_ALL': 'en_US.UTF-8', 'XDG_CONFIG_DIRS': '/etc/xdg/xdg-ubuntu:/etc/xdg', 'XDG_DATA_DIRS': '/usr/share/ubuntu:/usr/share/gnome:/usr/local/share/:/usr/share/:/var/lib/snapd/desktop', 'PYTHONPATH': '/home/anas/ros2_ws/build/doctor_engine/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/anas/ros2_ws/install/doctor_engine/lib/python3.12/site-packages:/home/anas/ros2_ws/install/wrist_replay/lib/python3.12/site-packages:/home/anas/ros2_ws/install/patient_engine/lib/python3.12/site-packages:/home/anas/ros2_ws/install/doctor_engine/lib/python3.12/site-packages:/opt/ros/jazzy/lib/python3.12/site-packages', 'COLCON': '1', 'MEMORY_PRESSURE_WRITE': 'c29tZSAyMDAwMDAgMjAwMDAwMAA=', 'VTE_VERSION': '7600', 'CMAKE_PREFIX_PATH': '/opt/ros/jazzy/opt/gz_math_vendor:/opt/ros/jazzy/opt/gz_utils_vendor:/opt/ros/jazzy/opt/gz_cmake_vendor'}, 'shell': False}
+[5.801781] (wrist_replay) Command: {'cmd': ['/usr/bin/python3', '-W', 'ignore:setup.py install is deprecated', '-W', 'ignore:easy_install command is deprecated', 'setup.py', 'egg_info', '--egg-base', '../../build/wrist_replay', 'build', '--build-base', '/home/anas/ros2_ws/build/wrist_replay/build', 'install', '--record', '/home/anas/ros2_ws/build/wrist_replay/install.log', '--single-version-externally-managed', 'install_data'], 'cwd': '/home/anas/ros2_ws/src/wrist_replay', 'env': {'LESSOPEN': '| /usr/bin/lesspipe %s', 'USER': 'anas', 'XDG_SESSION_TYPE': 'wayland', 'CLUTTER_DISABLE_MIPMAPPED_TEXT': '1', 'SHLVL': '1', 'LD_LIBRARY_PATH': '/opt/ros/jazzy/opt/rviz_ogre_vendor/lib:/opt/ros/jazzy/lib/x86_64-linux-gnu:/opt/ros/jazzy/opt/gz_math_vendor/lib:/opt/ros/jazzy/opt/gz_utils_vendor/lib:/opt/ros/jazzy/opt/gz_cmake_vendor/lib:/opt/ros/jazzy/lib', 'HOME': '/home/anas', 'OLDPWD': '/home/anas/ros2_ws/test_logs', 'DESKTOP_SESSION': 'ubuntu', 'ROS_PYTHON_VERSION': '3', 'GNOME_SHELL_SESSION_MODE': 'ubuntu', 'GTK_MODULES': 'gail:atk-bridge', 'SYSTEMD_EXEC_PID': '2369', 'GSM_SKIP_SSH_AGENT_WORKAROUND': 'true', 'DBUS_SESSION_BUS_ADDRESS': 'unix:path=/run/user/1000/bus', 'COLORTERM': 'truecolor', 'DEBUGINFOD_URLS': 'https://debuginfod.ubuntu.com', 'IM_CONFIG_PHASE': '1', 'WAYLAND_DISPLAY': 'wayland-0', 'COLCON_PREFIX_PATH': '/home/anas/ros2_ws/install', 'ROS_DISTRO': 'jazzy', 'LOGNAME': 'anas', '_': '/usr/bin/colcon', 'ROS_VERSION': '2', 'MEMORY_PRESSURE_WATCH': '/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/session.slice/org.gnome.Shell@wayland.service/memory.pressure', 'XDG_SESSION_CLASS': 'user', 'USERNAME': 'anas', 'TERM': 'xterm-256color', 'GNOME_DESKTOP_SESSION_ID': 'this-is-deprecated', 'PATH': '/opt/ros/jazzy/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/snap/bin', 'SESSION_MANAGER': 'local/anas-vm:@/tmp/.ICE-unix/2334,unix/anas-vm:/tmp/.ICE-unix/2334', 'XDG_MENU_PREFIX': 'gnome-', 'GNOME_TERMINAL_SCREEN': '/org/gnome/Terminal/screen/71a6ae7a_2300_42ac_9983_07611b2254d2', 'GNOME_SETUP_DISPLAY': ':1', 'XDG_RUNTIME_DIR': '/run/user/1000', 'DISPLAY': ':0', 'LANG': 'en_US.UTF-8', 'XDG_CURRENT_DESKTOP': 'ubuntu:GNOME', 'XMODIFIERS': '@im=ibus', 'XDG_SESSION_DESKTOP': 'ubuntu', 'XAUTHORITY': '/run/user/1000/.mutter-Xwaylandauth.YHHAE3', 'LS_COLORS': 'rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=00:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.avif=01;35:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.webp=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:*~=00;90:*#=00;90:*.bak=00;90:*.crdownload=00;90:*.dpkg-dist=00;90:*.dpkg-new=00;90:*.dpkg-old=00;90:*.dpkg-tmp=00;90:*.old=00;90:*.orig=00;90:*.part=00;90:*.rej=00;90:*.rpmnew=00;90:*.rpmorig=00;90:*.rpmsave=00;90:*.swp=00;90:*.tmp=00;90:*.ucf-dist=00;90:*.ucf-new=00;90:*.ucf-old=00;90:', 'GNOME_TERMINAL_SERVICE': ':1.108', 'SSH_AUTH_SOCK': '/run/user/1000/keyring/ssh', 'AMENT_PREFIX_PATH': '/home/anas/ros2_ws/install/wrist_replay:/home/anas/ros2_ws/install/patient_engine:/home/anas/ros2_ws/install/doctor_engine:/opt/ros/jazzy', 'SHELL': '/bin/bash', 'QT_ACCESSIBILITY': '1', 'GDMSESSION': 'ubuntu', 'LESSCLOSE': '/usr/bin/lesspipe %s %s', 'ROS_AUTOMATIC_DISCOVERY_RANGE': 'SUBNET', 'QT_IM_MODULE': 'ibus', 'PWD': '/home/anas/ros2_ws/build/wrist_replay', 'LC_ALL': 'en_US.UTF-8', 'XDG_CONFIG_DIRS': '/etc/xdg/xdg-ubuntu:/etc/xdg', 'XDG_DATA_DIRS': '/usr/share/ubuntu:/usr/share/gnome:/usr/local/share/:/usr/share/:/var/lib/snapd/desktop', 'PYTHONPATH': '/home/anas/ros2_ws/build/wrist_replay/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/anas/ros2_ws/install/wrist_replay/lib/python3.12/site-packages:/home/anas/ros2_ws/install/wrist_replay/lib/python3.12/site-packages:/home/anas/ros2_ws/install/patient_engine/lib/python3.12/site-packages:/home/anas/ros2_ws/install/doctor_engine/lib/python3.12/site-packages:/opt/ros/jazzy/lib/python3.12/site-packages', 'COLCON': '1', 'MEMORY_PRESSURE_WRITE': 'c29tZSAyMDAwMDAgMjAwMDAwMAA=', 'VTE_VERSION': '7600', 'CMAKE_PREFIX_PATH': '/opt/ros/jazzy/opt/gz_math_vendor:/opt/ros/jazzy/opt/gz_utils_vendor:/opt/ros/jazzy/opt/gz_cmake_vendor'}, 'shell': False}
+[5.837564] (-) TimerEvent: {}
+[5.940162] (-) TimerEvent: {}
+[6.040619] (-) TimerEvent: {}
+[6.141333] (-) TimerEvent: {}
+[6.241888] (-) TimerEvent: {}
+[6.344979] (-) TimerEvent: {}
+[6.445375] (-) TimerEvent: {}
+[6.545741] (-) TimerEvent: {}
+[6.646132] (-) TimerEvent: {}
+[6.746606] (-) TimerEvent: {}
+[6.821620] (patient_engine) StdoutLine: {'line': b'running egg_info\n'}
+[6.847319] (-) TimerEvent: {}
+[6.887707] (patient_engine) StdoutLine: {'line': b'writing ../../build/patient_engine/patient_engine.egg-info/PKG-INFO\n'}
+[6.889898] (patient_engine) StdoutLine: {'line': b'writing dependency_links to ../../build/patient_engine/patient_engine.egg-info/dependency_links.txt\n'}
+[6.890846] (patient_engine) StdoutLine: {'line': b'writing entry points to ../../build/patient_engine/patient_engine.egg-info/entry_points.txt\n'}
+[6.892195] (patient_engine) StdoutLine: {'line': b'writing requirements to ../../build/patient_engine/patient_engine.egg-info/requires.txt\n'}
+[6.892985] (patient_engine) StdoutLine: {'line': b'writing top-level names to ../../build/patient_engine/patient_engine.egg-info/top_level.txt\n'}
+[6.947572] (-) TimerEvent: {}
+[7.025968] (patient_engine) StdoutLine: {'line': b"reading manifest file '../../build/patient_engine/patient_engine.egg-info/SOURCES.txt'\n"}
+[7.028837] (patient_engine) StdoutLine: {'line': b"writing manifest file '../../build/patient_engine/patient_engine.egg-info/SOURCES.txt'\n"}
+[7.029620] (patient_engine) StdoutLine: {'line': b'running build\n'}
+[7.031461] (patient_engine) StdoutLine: {'line': b'running build_py\n'}
+[7.031789] (patient_engine) StdoutLine: {'line': b'running install\n'}
+[7.048454] (-) TimerEvent: {}
+[7.051369] (patient_engine) StdoutLine: {'line': b'running install_lib\n'}
+[7.142360] (patient_engine) StdoutLine: {'line': b'running install_data\n'}
+[7.144939] (patient_engine) StdoutLine: {'line': b'running install_egg_info\n'}
+[7.148568] (-) TimerEvent: {}
+[7.221909] (patient_engine) StdoutLine: {'line': b"removing '/home/anas/ros2_ws/install/patient_engine/lib/python3.12/site-packages/patient_engine-0.0.1-py3.12.egg-info' (and everything under it)\n"}
+[7.223415] (patient_engine) StdoutLine: {'line': b'Copying ../../build/patient_engine/patient_engine.egg-info to /home/anas/ros2_ws/install/patient_engine/lib/python3.12/site-packages/patient_engine-0.0.1-py3.12.egg-info\n'}
+[7.227598] (patient_engine) StdoutLine: {'line': b'running install_scripts\n'}
+[7.248645] (-) TimerEvent: {}
+[7.329693] (doctor_engine) StdoutLine: {'line': b'running egg_info\n'}
+[7.336580] (wrist_replay) StdoutLine: {'line': b'running egg_info\n'}
+[7.349256] (-) TimerEvent: {}
+[7.443957] (wrist_replay) StdoutLine: {'line': b'writing ../../build/wrist_replay/wrist_replay.egg-info/PKG-INFO\n'}
+[7.444952] (wrist_replay) StdoutLine: {'line': b'writing dependency_links to ../../build/wrist_replay/wrist_replay.egg-info/dependency_links.txt\n'}
+[7.445354] (wrist_replay) StdoutLine: {'line': b'writing entry points to ../../build/wrist_replay/wrist_replay.egg-info/entry_points.txt\n'}
+[7.447820] (wrist_replay) StdoutLine: {'line': b'writing requirements to ../../build/wrist_replay/wrist_replay.egg-info/requires.txt\n'}
+[7.448071] (wrist_replay) StdoutLine: {'line': b'writing top-level names to ../../build/wrist_replay/wrist_replay.egg-info/top_level.txt\n'}
+[7.451563] (-) TimerEvent: {}
+[7.471392] (doctor_engine) StdoutLine: {'line': b'writing ../../build/doctor_engine/doctor_engine.egg-info/PKG-INFO\n'}
+[7.472038] (doctor_engine) StdoutLine: {'line': b'writing dependency_links to ../../build/doctor_engine/doctor_engine.egg-info/dependency_links.txt\n'}
+[7.472856] (doctor_engine) StdoutLine: {'line': b'writing entry points to ../../build/doctor_engine/doctor_engine.egg-info/entry_points.txt\n'}
+[7.473540] (doctor_engine) StdoutLine: {'line': b'writing requirements to ../../build/doctor_engine/doctor_engine.egg-info/requires.txt\n'}
+[7.476828] (doctor_engine) StdoutLine: {'line': b'writing top-level names to ../../build/doctor_engine/doctor_engine.egg-info/top_level.txt\n'}
+[7.551893] (-) TimerEvent: {}
+[7.632176] (doctor_engine) StdoutLine: {'line': b"reading manifest file '../../build/doctor_engine/doctor_engine.egg-info/SOURCES.txt'\n"}
+[7.634571] (doctor_engine) StdoutLine: {'line': b"writing manifest file '../../build/doctor_engine/doctor_engine.egg-info/SOURCES.txt'\n"}
+[7.634894] (doctor_engine) StdoutLine: {'line': b'running build\n'}
+[7.635215] (doctor_engine) StdoutLine: {'line': b'running build_py\n'}
+[7.636633] (doctor_engine) StdoutLine: {'line': b'running install\n'}
+[7.639242] (wrist_replay) StdoutLine: {'line': b"reading manifest file '../../build/wrist_replay/wrist_replay.egg-info/SOURCES.txt'\n"}
+[7.642611] (wrist_replay) StdoutLine: {'line': b"writing manifest file '../../build/wrist_replay/wrist_replay.egg-info/SOURCES.txt'\n"}
+[7.642864] (wrist_replay) StdoutLine: {'line': b'running build\n'}
+[7.643047] (wrist_replay) StdoutLine: {'line': b'running build_py\n'}
+[7.643307] (wrist_replay) StdoutLine: {'line': b'running install\n'}
+[7.652301] (-) TimerEvent: {}
+[7.668750] (doctor_engine) StdoutLine: {'line': b'running install_lib\n'}
+[7.669025] (wrist_replay) StdoutLine: {'line': b'running install_lib\n'}
+[7.752546] (-) TimerEvent: {}
+[7.783786] (wrist_replay) StdoutLine: {'line': b'running install_data\n'}
+[7.784577] (wrist_replay) StdoutLine: {'line': b'running install_egg_info\n'}
+[7.793655] (doctor_engine) StdoutLine: {'line': b'running install_data\n'}
+[7.794125] (doctor_engine) StdoutLine: {'line': b'running install_egg_info\n'}
+[7.811401] (patient_engine) StdoutLine: {'line': b'Installing patient_anomaly_handler script to /home/anas/ros2_ws/install/patient_engine/lib/patient_engine\n'}
+[7.812396] (patient_engine) StdoutLine: {'line': b'Installing patient_mqtt_bridge script to /home/anas/ros2_ws/install/patient_engine/lib/patient_engine\n'}
+[7.813281] (patient_engine) StdoutLine: {'line': b'Installing patient_node script to /home/anas/ros2_ws/install/patient_engine/lib/patient_engine\n'}
+[7.814841] (patient_engine) StdoutLine: {'line': b"writing list of installed files to '/home/anas/ros2_ws/build/patient_engine/install.log'\n"}
+[7.854732] (-) TimerEvent: {}
+[7.888826] (patient_engine) CommandEnded: {'returncode': 0}
+[7.899581] (wrist_replay) StdoutLine: {'line': b"removing '/home/anas/ros2_ws/install/wrist_replay/lib/python3.12/site-packages/wrist_replay-0.0.1-py3.12.egg-info' (and everything under it)\n"}
+[7.901520] (wrist_replay) StdoutLine: {'line': b'Copying ../../build/wrist_replay/wrist_replay.egg-info to /home/anas/ros2_ws/install/wrist_replay/lib/python3.12/site-packages/wrist_replay-0.0.1-py3.12.egg-info\n'}
+[7.907092] (wrist_replay) StdoutLine: {'line': b'running install_scripts\n'}
+[7.917565] (doctor_engine) StdoutLine: {'line': b"removing '/home/anas/ros2_ws/install/doctor_engine/lib/python3.12/site-packages/doctor_engine-0.0.1-py3.12.egg-info' (and everything under it)\n"}
+[7.917929] (doctor_engine) StdoutLine: {'line': b'Copying ../../build/doctor_engine/doctor_engine.egg-info to /home/anas/ros2_ws/install/doctor_engine/lib/python3.12/site-packages/doctor_engine-0.0.1-py3.12.egg-info\n'}
+[7.922545] (doctor_engine) StdoutLine: {'line': b'running install_scripts\n'}
+[7.957779] (-) TimerEvent: {}
+[7.961603] (patient_engine) JobEnded: {'identifier': 'patient_engine', 'rc': 0}
+[8.066056] (-) TimerEvent: {}
+[8.166574] (-) TimerEvent: {}
+[8.266870] (-) TimerEvent: {}
+[8.367323] (-) TimerEvent: {}
+[8.467623] (-) TimerEvent: {}
+[8.568404] (-) TimerEvent: {}
+[8.570538] (wrist_replay) StdoutLine: {'line': b'Installing replay_node script to /home/anas/ros2_ws/install/wrist_replay/lib/wrist_replay\n'}
+[8.572715] (wrist_replay) StdoutLine: {'line': b"writing list of installed files to '/home/anas/ros2_ws/build/wrist_replay/install.log'\n"}
+[8.629647] (wrist_replay) CommandEnded: {'returncode': 0}
+[8.645810] (wrist_replay) JobEnded: {'identifier': 'wrist_replay', 'rc': 0}
+[8.651254] (doctor_engine) StdoutLine: {'line': b'Installing doctor_anomaly_handler script to /home/anas/ros2_ws/install/doctor_engine/lib/doctor_engine\n'}
+[8.653709] (doctor_engine) StdoutLine: {'line': b'Installing doctor_mqtt_bridge script to /home/anas/ros2_ws/install/doctor_engine/lib/doctor_engine\n'}
+[8.653978] (doctor_engine) StdoutLine: {'line': b'Installing doctor_node script to /home/anas/ros2_ws/install/doctor_engine/lib/doctor_engine\n'}
+[8.659695] (doctor_engine) StdoutLine: {'line': b"writing list of installed files to '/home/anas/ros2_ws/build/doctor_engine/install.log'\n"}
+[8.669979] (-) TimerEvent: {}
+[8.728018] (doctor_engine) CommandEnded: {'returncode': 0}
+[8.745842] (doctor_engine) JobEnded: {'identifier': 'doctor_engine', 'rc': 0}
+[8.748485] (-) EventReactorShutdown: {}

@@ -1,0 +1,115 @@
+[INFO] [1759956016.446741902] [patient_anomaly_handler]: [patient_anomaly_handler] mode=normal freeze=False
+[INFO] [1759956016.448035765] [patient_anomaly_handler]: [patient_anomaly_handler] ready (hysteresis=2.0s)
+[INFO] [1759956020.129916180] [patient_anomaly_handler]: [patient_anomaly_handler] mode=passive freeze=False
+[INFO] [1759956021.628407690] [patient_anomaly_handler]: [patient_anomaly_handler] mode=estop freeze=True
+[INFO] [1759956021.683396179] [patient_anomaly_handler]: [patient_anomaly_handler] mode=passive freeze=False
+[INFO] [1759956021.747218848] [patient_anomaly_handler]: [patient_anomaly_handler] mode=estop freeze=True
+[INFO] [1759956023.002109589] [patient_anomaly_handler]: [patient_anomaly_handler] mode=passive freeze=False
+[INFO] [1759956717.628526857] [patient_anomaly_handler]: [patient_anomaly_handler] mode=normal freeze=False
+[INFO] [1759956717.632849624] [patient_anomaly_handler]: [patient_anomaly_handler] CLEAR → mode=normal (after network restore)
+[INFO] [1759956717.638538663] [patient_anomaly_handler]: [patient_anomaly_handler] mode=passive freeze=False
+[INFO] [1759956930.658032359] [patient_anomaly_handler]: [patient_anomaly_handler] mode=normal freeze=False
+[INFO] [1759956930.659554742] [patient_anomaly_handler]: [patient_anomaly_handler] CLEAR → mode=normal (after network restore)
+[INFO] [1759956930.729194388] [patient_anomaly_handler]: [patient_anomaly_handler] mode=passive freeze=False
+[INFO] [1759956956.101212361] [patient_anomaly_handler]: [patient_anomaly_handler] mode=normal freeze=False
+[INFO] [1759956956.116415398] [patient_anomaly_handler]: [patient_anomaly_handler] CLEAR → mode=normal (after network restore)
+[INFO] [1759956956.129315782] [patient_anomaly_handler]: [patient_anomaly_handler] CLEAR → mode=normal (after network restore)
+[INFO] [1759956956.142517420] [patient_anomaly_handler]: [patient_anomaly_handler] CLEAR → mode=normal (after network restore)
+[INFO] [1759956956.144742309] [patient_anomaly_handler]: [patient_anomaly_handler] CLEAR → mode=normal (after network restore)
+[INFO] [1759956956.149758276] [patient_anomaly_handler]: [patient_anomaly_handler] CLEAR → mode=normal (after network restore)
+[INFO] [1759956956.154584270] [patient_anomaly_handler]: [patient_anomaly_handler] CLEAR → mode=normal (after network restore)
+[INFO] [1759956956.203079280] [patient_anomaly_handler]: [patient_anomaly_handler] CLEAR → mode=normal (after network restore)
+[INFO] [1759956956.213492529] [patient_anomaly_handler]: [patient_anomaly_handler] CLEAR → mode=normal (after network restore)
+[INFO] [1759956956.215708652] [patient_anomaly_handler]: [patient_anomaly_handler] CLEAR → mode=normal (after network restore)
+[INFO] [1759956956.318969065] [patient_anomaly_handler]: [patient_anomaly_handler] CLEAR → mode=normal (after network restore)
+[INFO] [1759956956.330079729] [patient_anomaly_handler]: [patient_anomaly_handler] CLEAR → mode=normal (after network restore)
+[INFO] [1759956956.342634609] [patient_anomaly_handler]: [patient_anomaly_handler] CLEAR → mode=normal (after network restore)
+[INFO] [1759956956.594657950] [patient_anomaly_handler]: [patient_anomaly_handler] CLEAR → mode=normal (after network restore)
+[INFO] [1759956956.596003014] [patient_anomaly_handler]: [patient_anomaly_handler] CLEAR → mode=normal (after network restore)
+[INFO] [1759956956.600409729] [patient_anomaly_handler]: [patient_anomaly_handler] CLEAR → mode=normal (after network restore)
+[INFO] [1759956956.646258523] [patient_anomaly_handler]: [patient_anomaly_handler] CLEAR → mode=normal (after network restore)
+[INFO] [1759956956.664587204] [patient_anomaly_handler]: [patient_anomaly_handler] CLEAR → mode=normal (after network restore)
+[INFO] [1759956956.666129615] [patient_anomaly_handler]: [patient_anomaly_handler] CLEAR → mode=normal (after network restore)
+[INFO] [1759956956.822212805] [patient_anomaly_handler]: [patient_anomaly_handler] CLEAR → mode=normal (after network restore)
+[INFO] [1759956956.864534647] [patient_anomaly_handler]: [patient_anomaly_handler] CLEAR → mode=normal (after network restore)
+[INFO] [1759956956.865951775] [patient_anomaly_handler]: [patient_anomaly_handler] CLEAR → mode=normal (after network restore)
+[INFO] [1759956957.186284066] [patient_anomaly_handler]: [patient_anomaly_handler] CLEAR → mode=normal (after network restore)
+[INFO] [1759956957.191230198] [patient_anomaly_handler]: [patient_anomaly_handler] CLEAR → mode=normal (after network restore)
+[INFO] [1759956957.192574439] [patient_anomaly_handler]: [patient_anomaly_handler] CLEAR → mode=normal (after network restore)
+[INFO] [1759956965.923498209] [patient_anomaly_handler]: [patient_anomaly_handler] CLEAR → mode=normal (after network restore)
+[INFO] [1759956965.941635955] [patient_anomaly_handler]: [patient_anomaly_handler] CLEAR → mode=normal (after network restore)
+[INFO] [1759956965.955839819] [patient_anomaly_handler]: [patient_anomaly_handler] CLEAR → mode=normal (after network restore)
+[INFO] [1759956965.993547532] [patient_anomaly_handler]: [patient_anomaly_handler] CLEAR → mode=normal (after network restore)
+[INFO] [1759956965.995517117] [patient_anomaly_handler]: [patient_anomaly_handler] CLEAR → mode=normal (after network restore)
+[INFO] [1759956966.011513106] [patient_anomaly_handler]: [patient_anomaly_handler] CLEAR → mode=normal (after network restore)
+[INFO] [1759956966.186787778] [patient_anomaly_handler]: [patient_anomaly_handler] CLEAR → mode=normal (after network restore)
+[INFO] [1759956966.200417177] [patient_anomaly_handler]: [patient_anomaly_handler] CLEAR → mode=normal (after network restore)
+[INFO] [1759956966.209486634] [patient_anomaly_handler]: [patient_anomaly_handler] CLEAR → mode=normal (after network restore)
+[INFO] [1759956966.252897393] [patient_anomaly_handler]: [patient_anomaly_handler] CLEAR → mode=normal (after network restore)
+[INFO] [1759956966.256771918] [patient_anomaly_handler]: [patient_anomaly_handler] CLEAR → mode=normal (after network restore)
+[INFO] [1759956966.261391679] [patient_anomaly_handler]: [patient_anomaly_handler] CLEAR → mode=normal (after network restore)
+[INFO] [1759956966.363130048] [patient_anomaly_handler]: [patient_anomaly_handler] CLEAR → mode=normal (after network restore)
+[INFO] [1759956966.383140476] [patient_anomaly_handler]: [patient_anomaly_handler] CLEAR → mode=normal (after network restore)
+[INFO] [1759956966.400228830] [patient_anomaly_handler]: [patient_anomaly_handler] CLEAR → mode=normal (after network restore)
+[INFO] [1759956967.165734471] [patient_anomaly_handler]: [patient_anomaly_handler] CLEAR → mode=normal (after network restore)
+[INFO] [1759956967.169675233] [patient_anomaly_handler]: [patient_anomaly_handler] CLEAR → mode=normal (after network restore)
+[INFO] [1759956967.175095802] [patient_anomaly_handler]: [patient_anomaly_handler] CLEAR → mode=normal (after network restore)
+[INFO] [1759956967.207941519] [patient_anomaly_handler]: [patient_anomaly_handler] CLEAR → mode=normal (after network restore)
+[INFO] [1759956967.216353814] [patient_anomaly_handler]: [patient_anomaly_handler] CLEAR → mode=normal (after network restore)
+[INFO] [1759956967.225263459] [patient_anomaly_handler]: [patient_anomaly_handler] CLEAR → mode=normal (after network restore)
+[INFO] [1759956967.852418596] [patient_anomaly_handler]: [patient_anomaly_handler] CLEAR → mode=normal (after network restore)
+[INFO] [1759956967.860454214] [patient_anomaly_handler]: [patient_anomaly_handler] CLEAR → mode=normal (after network restore)
+[INFO] [1759956967.861931619] [patient_anomaly_handler]: [patient_anomaly_handler] CLEAR → mode=normal (after network restore)
+[INFO] [1759956967.958003641] [patient_anomaly_handler]: [patient_anomaly_handler] CLEAR → mode=normal (after network restore)
+[INFO] [1759956967.963945369] [patient_anomaly_handler]: [patient_anomaly_handler] CLEAR → mode=normal (after network restore)
+[INFO] [1759956967.965569784] [patient_anomaly_handler]: [patient_anomaly_handler] CLEAR → mode=normal (after network restore)
+[INFO] [1759956968.449047237] [patient_anomaly_handler]: [patient_anomaly_handler] CLEAR → mode=normal (after network restore)
+[INFO] [1759956968.450449159] [patient_anomaly_handler]: [patient_anomaly_handler] CLEAR → mode=normal (after network restore)
+[INFO] [1759956968.455151553] [patient_anomaly_handler]: [patient_anomaly_handler] CLEAR → mode=normal (after network restore)
+[INFO] [1759956980.472063718] [patient_anomaly_handler]: [patient_anomaly_handler] CLEAR → mode=normal (after network restore)
+[INFO] [1759956980.482525591] [patient_anomaly_handler]: [patient_anomaly_handler] CLEAR → mode=normal (after network restore)
+[INFO] [1759956980.484159381] [patient_anomaly_handler]: [patient_anomaly_handler] CLEAR → mode=normal (after network restore)
+[INFO] [1759956980.494298002] [patient_anomaly_handler]: [patient_anomaly_handler] CLEAR → mode=normal (after network restore)
+[INFO] [1759956980.506757092] [patient_anomaly_handler]: [patient_anomaly_handler] CLEAR → mode=normal (after network restore)
+[INFO] [1759956980.508372745] [patient_anomaly_handler]: [patient_anomaly_handler] CLEAR → mode=normal (after network restore)
+[INFO] [1759956981.396783490] [patient_anomaly_handler]: [patient_anomaly_handler] CLEAR → mode=normal (after network restore)
+[INFO] [1759956981.401053105] [patient_anomaly_handler]: [patient_anomaly_handler] CLEAR → mode=normal (after network restore)
+[INFO] [1759956981.402505097] [patient_anomaly_handler]: [patient_anomaly_handler] CLEAR → mode=normal (after network restore)
+[INFO] [1759956981.454476207] [patient_anomaly_handler]: [patient_anomaly_handler] CLEAR → mode=normal (after network restore)
+[INFO] [1759956981.473359325] [patient_anomaly_handler]: [patient_anomaly_handler] CLEAR → mode=normal (after network restore)
+[INFO] [1759956981.474830593] [patient_anomaly_handler]: [patient_anomaly_handler] CLEAR → mode=normal (after network restore)
+[INFO] [1759956998.679967095] [patient_anomaly_handler]: [patient_anomaly_handler] CLEAR → mode=normal (after network restore)
+[INFO] [1759956998.682400214] [patient_anomaly_handler]: [patient_anomaly_handler] CLEAR → mode=normal (after network restore)
+[INFO] [1759956998.697652992] [patient_anomaly_handler]: [patient_anomaly_handler] CLEAR → mode=normal (after network restore)
+[INFO] [1759956998.715881508] [patient_anomaly_handler]: [patient_anomaly_handler] CLEAR → mode=normal (after network restore)
+[INFO] [1759956998.726022356] [patient_anomaly_handler]: [patient_anomaly_handler] CLEAR → mode=normal (after network restore)
+[INFO] [1759956998.733451520] [patient_anomaly_handler]: [patient_anomaly_handler] CLEAR → mode=normal (after network restore)
+[INFO] [1759956998.745699430] [patient_anomaly_handler]: [patient_anomaly_handler] CLEAR → mode=normal (after network restore)
+[INFO] [1759956998.755328838] [patient_anomaly_handler]: [patient_anomaly_handler] CLEAR → mode=normal (after network restore)
+[INFO] [1759956998.756793881] [patient_anomaly_handler]: [patient_anomaly_handler] CLEAR → mode=normal (after network restore)
+[INFO] [1759956998.861744400] [patient_anomaly_handler]: [patient_anomaly_handler] CLEAR → mode=normal (after network restore)
+[INFO] [1759956998.863114439] [patient_anomaly_handler]: [patient_anomaly_handler] CLEAR → mode=normal (after network restore)
+[INFO] [1759956998.873764495] [patient_anomaly_handler]: [patient_anomaly_handler] CLEAR → mode=normal (after network restore)
+[INFO] [1759956999.330938773] [patient_anomaly_handler]: [patient_anomaly_handler] CLEAR → mode=normal (after network restore)
+[INFO] [1759956999.351109865] [patient_anomaly_handler]: [patient_anomaly_handler] mode=passive freeze=False
+[INFO] [1759957030.874598274] [patient_anomaly_handler]: [patient_anomaly_handler] mode=estop freeze=True
+[INFO] [1759957030.915645445] [patient_anomaly_handler]: [patient_anomaly_handler] mode=passive freeze=False
+[INFO] [1759957030.927576783] [patient_anomaly_handler]: [patient_anomaly_handler] mode=estop freeze=True
+[INFO] [1759957030.961152637] [patient_anomaly_handler]: [patient_anomaly_handler] mode=passive freeze=False
+[INFO] [1759957039.815919331] [patient_anomaly_handler]: [patient_anomaly_handler] mode=estop freeze=True
+[INFO] [1759957039.905782697] [patient_anomaly_handler]: [patient_anomaly_handler] mode=passive freeze=False
+[INFO] [1759957040.491085099] [patient_anomaly_handler]: [patient_anomaly_handler] mode=estop freeze=True
+[INFO] [1759957040.676663954] [patient_anomaly_handler]: [patient_anomaly_handler] mode=passive freeze=False
+[INFO] [1759957042.846937305] [patient_anomaly_handler]: [patient_anomaly_handler] mode=estop freeze=True
+[INFO] [1759957043.017012220] [patient_anomaly_handler]: [patient_anomaly_handler] mode=passive freeze=False
+[INFO] [1759957043.641469664] [patient_anomaly_handler]: [patient_anomaly_handler] mode=estop freeze=True
+[INFO] [1759957043.998780117] [patient_anomaly_handler]: [patient_anomaly_handler] mode=passive freeze=False
+[INFO] [1759957058.759317683] [patient_anomaly_handler]: [patient_anomaly_handler] mode=estop freeze=True
+[INFO] [1759957059.388870921] [patient_anomaly_handler]: [patient_anomaly_handler] mode=passive freeze=False
+[INFO] [1759957060.120504179] [patient_anomaly_handler]: [patient_anomaly_handler] mode=estop freeze=True
+[INFO] [1759957060.841449695] [patient_anomaly_handler]: [patient_anomaly_handler] mode=passive freeze=False
+[INFO] [1759957062.981367237] [patient_anomaly_handler]: [patient_anomaly_handler] mode=estop freeze=True
+[INFO] [1759957063.423953151] [patient_anomaly_handler]: [patient_anomaly_handler] mode=passive freeze=False
+[INFO] [1759957067.531399955] [patient_anomaly_handler]: [patient_anomaly_handler] mode=estop freeze=True
+[INFO] [1759957068.121127319] [patient_anomaly_handler]: [patient_anomaly_handler] mode=passive freeze=False
+[INFO] [1759957074.621958064] [patient_anomaly_handler]: [patient_anomaly_handler] mode=estop freeze=True

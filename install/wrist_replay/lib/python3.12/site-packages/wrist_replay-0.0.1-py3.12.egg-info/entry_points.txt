@@ -1,0 +1,2 @@
+[console_scripts]
+replay_node = wrist_replay.replay_node:main

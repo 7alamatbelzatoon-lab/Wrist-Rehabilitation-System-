@@ -1,0 +1,32 @@
+[INFO] [1759956016.238639450] [doctor_node]: Doctor Node initiated!
+[INFO] [1759956016.900170585] [doctor_node]: [Doctor] 🧠 Published target: 0.00°
+[INFO] [1759956017.925081499] [doctor_node]: [Doctor] 🧠 Published target: 5.00°
+[INFO] [1759956018.898365683] [doctor_node]: [Doctor] 🧠 Published target: 10.00°
+[INFO] [1759956019.893871611] [doctor_node]: [Doctor] 🧠 Published target: 15.00°
+[INFO] [1759956020.898518115] [doctor_node]: [Doctor] 🧠 Published target: 20.00°
+[INFO] [1759956021.927254019] [doctor_node]: [Doctor] 🧠 Published target: 25.00°
+[INFO] [1759956022.922691344] [doctor_node]: [Doctor] 🧠 Published target: 30.00°
+[INFO] [1759956023.889654747] [doctor_node]: [Doctor] 🧠 Published target: 35.00°
+[INFO] [1759956024.915342591] [doctor_node]: [Doctor] 🧠 Published target: 40.00°
+[INFO] [1759956025.923326859] [doctor_node]: [Doctor] 🧠 Published target: 45.00°
+[INFO] [1759956026.900589827] [doctor_node]: [Doctor] 🧠 Published target: 50.00°
+[INFO] [1759956027.891781846] [doctor_node]: [Doctor] 🧠 Published target: 55.00°
+[INFO] [1759956028.893784588] [doctor_node]: [Doctor] 🧠 Published target: 60.00°
+[INFO] [1759956029.891770862] [doctor_node]: [Doctor] 🧠 Published target: 65.00°
+[INFO] [1759956030.987630293] [doctor_node]: [Doctor] 🧠 Published target: 70.00°
+[INFO] [1759956031.889989887] [doctor_node]: [Doctor] 🧠 Published target: 70.00°
+[INFO] [1759956032.890373934] [doctor_node]: [Doctor] 🧠 Published target: 65.00°
+[INFO] [1759956033.891625944] [doctor_node]: [Doctor] 🧠 Published target: 60.00°
+[INFO] [1759956034.891373392] [doctor_node]: [Doctor] 🧠 Published target: 55.00°
+[INFO] [1759956035.893964764] [doctor_node]: [Doctor] 🧠 Published target: 50.00°
+[INFO] [1759956036.894445685] [doctor_node]: [Doctor] 🧠 Published target: 45.00°
+[INFO] [1759956037.890715669] [doctor_node]: [Doctor] 🧠 Published target: 40.00°
+[INFO] [1759956038.894574833] [doctor_node]: [Doctor] 🧠 Published target: 35.00°
+[INFO] [1759956039.892450829] [doctor_node]: [Doctor] 🧠 Published target: 30.00°
+[INFO] [1759956040.893856598] [doctor_node]: [Doctor] 🧠 Published target: 25.00°
+[INFO] [1759956041.890287333] [doctor_node]: [Doctor] 🧠 Published target: 20.00°
+[INFO] [1759956042.890943008] [doctor_node]: [Doctor] 🧠 Published target: 15.00°
+[INFO] [1759956043.892208110] [doctor_node]: [Doctor] 🧠 Published target: 10.00°
+[INFO] [1759956044.890399176] [doctor_node]: [Doctor] 🧠 Published target: 5.00°
+[INFO] [1759956045.892625967] [doctor_node]: [Doctor] 🧠 Published target: 0.00°
+[INFO] [1759956046.889585322] [doctor_node]: [Doctor] ✅ Finished publishing all target angles.

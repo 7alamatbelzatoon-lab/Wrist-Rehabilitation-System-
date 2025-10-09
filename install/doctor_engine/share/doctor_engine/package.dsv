@@ -1,0 +1,6 @@
+source;share/doctor_engine/hook/pythonpath.ps1
+source;share/doctor_engine/hook/pythonpath.dsv
+source;share/doctor_engine/hook/pythonpath.sh
+source;share/doctor_engine/hook/ament_prefix_path.ps1
+source;share/doctor_engine/hook/ament_prefix_path.dsv
+source;share/doctor_engine/hook/ament_prefix_path.sh

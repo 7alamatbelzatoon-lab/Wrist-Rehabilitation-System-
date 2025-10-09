@@ -1,0 +1,6 @@
+source;share/wrist_replay/hook/pythonpath.ps1
+source;share/wrist_replay/hook/pythonpath.dsv
+source;share/wrist_replay/hook/pythonpath.sh
+source;share/wrist_replay/hook/ament_prefix_path.ps1
+source;share/wrist_replay/hook/ament_prefix_path.dsv
+source;share/wrist_replay/hook/ament_prefix_path.sh

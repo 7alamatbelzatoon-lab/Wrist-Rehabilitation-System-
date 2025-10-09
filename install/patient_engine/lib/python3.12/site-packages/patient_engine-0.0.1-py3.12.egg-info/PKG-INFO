@@ -1,0 +1,7 @@
+Metadata-Version: 2.1
+Name: patient-engine
+Version: 0.0.1
+Summary: Patient-side runtime (control + MQTT bridge; safety later)
+Maintainer: anas
+Maintainer-email: anas@todo.todo
+License: MIT

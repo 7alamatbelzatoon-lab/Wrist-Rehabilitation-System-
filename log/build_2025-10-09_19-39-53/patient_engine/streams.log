@@ -1,0 +1,27 @@
+[5.756s] Invoking command in '/home/anas/ros2_ws/src/patient_engine': DEBUGINFOD_URLS=https://debuginfod.ubuntu.com PYTHONPATH=/home/anas/ros2_ws/build/patient_engine/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/anas/ros2_ws/install/patient_engine/lib/python3.12/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/patient_engine build --build-base /home/anas/ros2_ws/build/patient_engine/build install --record /home/anas/ros2_ws/build/patient_engine/install.log --single-version-externally-managed install_data
+[7.397s] running egg_info
+[7.482s] writing ../../build/patient_engine/patient_engine.egg-info/PKG-INFO
+[7.482s] writing dependency_links to ../../build/patient_engine/patient_engine.egg-info/dependency_links.txt
+[7.483s] writing entry points to ../../build/patient_engine/patient_engine.egg-info/entry_points.txt
+[7.483s] writing requirements to ../../build/patient_engine/patient_engine.egg-info/requires.txt
+[7.483s] writing top-level names to ../../build/patient_engine/patient_engine.egg-info/top_level.txt
+[7.642s] reading manifest file '../../build/patient_engine/patient_engine.egg-info/SOURCES.txt'
+[7.644s] writing manifest file '../../build/patient_engine/patient_engine.egg-info/SOURCES.txt'
+[7.645s] running build
+[7.646s] running build_py
+[7.646s] copying patient_engine/nodes/patient_motion_anomaly_handler.py -> /home/anas/ros2_ws/build/patient_engine/build/lib/patient_engine/nodes
+[7.646s] running install
+[7.685s] running install_lib
+[7.823s] copying /home/anas/ros2_ws/build/patient_engine/build/lib/patient_engine/nodes/patient_motion_anomaly_handler.py -> /home/anas/ros2_ws/install/patient_engine/lib/python3.12/site-packages/patient_engine/nodes
+[7.823s] byte-compiling /home/anas/ros2_ws/install/patient_engine/lib/python3.12/site-packages/patient_engine/nodes/patient_motion_anomaly_handler.py to patient_motion_anomaly_handler.cpython-312.pyc
+[7.824s] running install_data
+[7.824s] running install_egg_info
+[8.031s] removing '/home/anas/ros2_ws/install/patient_engine/lib/python3.12/site-packages/patient_engine-0.0.1-py3.12.egg-info' (and everything under it)
+[8.035s] Copying ../../build/patient_engine/patient_engine.egg-info to /home/anas/ros2_ws/install/patient_engine/lib/python3.12/site-packages/patient_engine-0.0.1-py3.12.egg-info
+[8.041s] running install_scripts
+[9.020s] Installing patient_motion_anomaly_handler script to /home/anas/ros2_ws/install/patient_engine/lib/patient_engine
+[9.021s] Installing patient_mqtt_bridge script to /home/anas/ros2_ws/install/patient_engine/lib/patient_engine
+[9.021s] Installing patient_network_anomaly_handler script to /home/anas/ros2_ws/install/patient_engine/lib/patient_engine
+[9.021s] Installing patient_node script to /home/anas/ros2_ws/install/patient_engine/lib/patient_engine
+[9.021s] writing list of installed files to '/home/anas/ros2_ws/build/patient_engine/install.log'
+[9.113s] Invoked command in '/home/anas/ros2_ws/src/patient_engine' returned '0': DEBUGINFOD_URLS=https://debuginfod.ubuntu.com PYTHONPATH=/home/anas/ros2_ws/build/patient_engine/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/anas/ros2_ws/install/patient_engine/lib/python3.12/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/patient_engine build --build-base /home/anas/ros2_ws/build/patient_engine/build install --record /home/anas/ros2_ws/build/patient_engine/install.log --single-version-externally-managed install_data

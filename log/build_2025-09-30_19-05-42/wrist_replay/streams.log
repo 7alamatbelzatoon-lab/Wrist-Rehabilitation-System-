@@ -1,0 +1,41 @@
+[3.657s] Invoking command in '/home/anas/ros2_ws/src/wrist_replay': DEBUGINFOD_URLS=https://debuginfod.ubuntu.com PYTHONPATH=/home/anas/ros2_ws/build/wrist_replay/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/anas/ros2_ws/install/wrist_replay/lib/python3.12/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/wrist_replay build --build-base /home/anas/ros2_ws/build/wrist_replay/build install --record /home/anas/ros2_ws/build/wrist_replay/install.log --single-version-externally-managed install_data
+[4.485s] running egg_info
+[4.487s] creating ../../build/wrist_replay/wrist_replay.egg-info
+[4.546s] writing ../../build/wrist_replay/wrist_replay.egg-info/PKG-INFO
+[4.546s] writing dependency_links to ../../build/wrist_replay/wrist_replay.egg-info/dependency_links.txt
+[4.547s] writing entry points to ../../build/wrist_replay/wrist_replay.egg-info/entry_points.txt
+[4.547s] writing requirements to ../../build/wrist_replay/wrist_replay.egg-info/requires.txt
+[4.548s] writing top-level names to ../../build/wrist_replay/wrist_replay.egg-info/top_level.txt
+[4.548s] writing manifest file '../../build/wrist_replay/wrist_replay.egg-info/SOURCES.txt'
+[4.653s] reading manifest file '../../build/wrist_replay/wrist_replay.egg-info/SOURCES.txt'
+[4.655s] writing manifest file '../../build/wrist_replay/wrist_replay.egg-info/SOURCES.txt'
+[4.655s] running build
+[4.656s] running build_py
+[4.656s] creating /home/anas/ros2_ws/build/wrist_replay/build
+[4.657s] creating /home/anas/ros2_ws/build/wrist_replay/build/lib
+[4.657s] creating /home/anas/ros2_ws/build/wrist_replay/build/lib/wrist_replay
+[4.657s] copying wrist_replay/__init__.py -> /home/anas/ros2_ws/build/wrist_replay/build/lib/wrist_replay
+[4.657s] copying wrist_replay/replay_node.py -> /home/anas/ros2_ws/build/wrist_replay/build/lib/wrist_replay
+[4.658s] running install
+[4.676s] running install_lib
+[4.736s] creating /home/anas/ros2_ws/install/wrist_replay/lib/python3.12/site-packages/wrist_replay
+[4.736s] copying /home/anas/ros2_ws/build/wrist_replay/build/lib/wrist_replay/__init__.py -> /home/anas/ros2_ws/install/wrist_replay/lib/python3.12/site-packages/wrist_replay
+[4.737s] copying /home/anas/ros2_ws/build/wrist_replay/build/lib/wrist_replay/replay_node.py -> /home/anas/ros2_ws/install/wrist_replay/lib/python3.12/site-packages/wrist_replay
+[4.738s] byte-compiling /home/anas/ros2_ws/install/wrist_replay/lib/python3.12/site-packages/wrist_replay/__init__.py to __init__.cpython-312.pyc
+[4.739s] byte-compiling /home/anas/ros2_ws/install/wrist_replay/lib/python3.12/site-packages/wrist_replay/replay_node.py to replay_node.cpython-312.pyc
+[4.751s] running install_data
+[4.751s] creating /home/anas/ros2_ws/install/wrist_replay/share/ament_index
+[4.751s] creating /home/anas/ros2_ws/install/wrist_replay/share/ament_index/resource_index
+[4.752s] creating /home/anas/ros2_ws/install/wrist_replay/share/ament_index/resource_index/packages
+[4.752s] copying resource/wrist_replay -> /home/anas/ros2_ws/install/wrist_replay/share/ament_index/resource_index/packages
+[4.752s] copying package.xml -> /home/anas/ros2_ws/install/wrist_replay/share/wrist_replay
+[4.753s] creating /home/anas/ros2_ws/install/wrist_replay/share/wrist_replay/urdf
+[4.753s] copying urdf/wrist.urdf -> /home/anas/ros2_ws/install/wrist_replay/share/wrist_replay/urdf
+[4.753s] creating /home/anas/ros2_ws/install/wrist_replay/share/wrist_replay/launch
+[4.753s] copying launch/replay.launch.py -> /home/anas/ros2_ws/install/wrist_replay/share/wrist_replay/launch
+[4.754s] running install_egg_info
+[4.818s] Copying ../../build/wrist_replay/wrist_replay.egg-info to /home/anas/ros2_ws/install/wrist_replay/lib/python3.12/site-packages/wrist_replay-0.0.1-py3.12.egg-info
+[4.823s] running install_scripts
+[5.321s] Installing replay_node script to /home/anas/ros2_ws/install/wrist_replay/lib/wrist_replay
+[5.323s] writing list of installed files to '/home/anas/ros2_ws/build/wrist_replay/install.log'
+[5.363s] Invoked command in '/home/anas/ros2_ws/src/wrist_replay' returned '0': DEBUGINFOD_URLS=https://debuginfod.ubuntu.com PYTHONPATH=/home/anas/ros2_ws/build/wrist_replay/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/anas/ros2_ws/install/wrist_replay/lib/python3.12/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/wrist_replay build --build-base /home/anas/ros2_ws/build/wrist_replay/build install --record /home/anas/ros2_ws/build/wrist_replay/install.log --single-version-externally-managed install_data

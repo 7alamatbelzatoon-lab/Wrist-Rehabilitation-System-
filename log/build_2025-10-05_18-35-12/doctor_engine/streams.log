@@ -1,0 +1,25 @@
+[4.253s] Invoking command in '/home/anas/ros2_ws/src/doctor_engine': DEBUGINFOD_URLS=https://debuginfod.ubuntu.com PYTHONPATH=/home/anas/ros2_ws/build/doctor_engine/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/anas/ros2_ws/install/doctor_engine/lib/python3.12/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/doctor_engine build --build-base /home/anas/ros2_ws/build/doctor_engine/build install --record /home/anas/ros2_ws/build/doctor_engine/install.log --single-version-externally-managed install_data
+[5.117s] running egg_info
+[5.172s] writing ../../build/doctor_engine/doctor_engine.egg-info/PKG-INFO
+[5.175s] writing dependency_links to ../../build/doctor_engine/doctor_engine.egg-info/dependency_links.txt
+[5.175s] writing entry points to ../../build/doctor_engine/doctor_engine.egg-info/entry_points.txt
+[5.175s] writing requirements to ../../build/doctor_engine/doctor_engine.egg-info/requires.txt
+[5.175s] writing top-level names to ../../build/doctor_engine/doctor_engine.egg-info/top_level.txt
+[5.291s] reading manifest file '../../build/doctor_engine/doctor_engine.egg-info/SOURCES.txt'
+[5.294s] writing manifest file '../../build/doctor_engine/doctor_engine.egg-info/SOURCES.txt'
+[5.296s] running build
+[5.296s] running build_py
+[5.297s] copying doctor_engine/nodes/doctor_mqtt_bridge.py -> /home/anas/ros2_ws/build/doctor_engine/build/lib/doctor_engine/nodes
+[5.298s] running install
+[5.318s] running install_lib
+[5.375s] copying /home/anas/ros2_ws/build/doctor_engine/build/lib/doctor_engine/nodes/doctor_mqtt_bridge.py -> /home/anas/ros2_ws/install/doctor_engine/lib/python3.12/site-packages/doctor_engine/nodes
+[5.378s] byte-compiling /home/anas/ros2_ws/install/doctor_engine/lib/python3.12/site-packages/doctor_engine/nodes/doctor_mqtt_bridge.py to doctor_mqtt_bridge.cpython-312.pyc
+[5.384s] running install_data
+[5.386s] running install_egg_info
+[5.444s] removing '/home/anas/ros2_ws/install/doctor_engine/lib/python3.12/site-packages/doctor_engine-0.0.1-py3.12.egg-info' (and everything under it)
+[5.447s] Copying ../../build/doctor_engine/doctor_engine.egg-info to /home/anas/ros2_ws/install/doctor_engine/lib/python3.12/site-packages/doctor_engine-0.0.1-py3.12.egg-info
+[5.451s] running install_scripts
+[5.995s] Installing doctor_mqtt_bridge script to /home/anas/ros2_ws/install/doctor_engine/lib/doctor_engine
+[5.995s] Installing doctor_node script to /home/anas/ros2_ws/install/doctor_engine/lib/doctor_engine
+[5.996s] writing list of installed files to '/home/anas/ros2_ws/build/doctor_engine/install.log'
+[6.043s] Invoked command in '/home/anas/ros2_ws/src/doctor_engine' returned '0': DEBUGINFOD_URLS=https://debuginfod.ubuntu.com PYTHONPATH=/home/anas/ros2_ws/build/doctor_engine/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/anas/ros2_ws/install/doctor_engine/lib/python3.12/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/doctor_engine build --build-base /home/anas/ros2_ws/build/doctor_engine/build install --record /home/anas/ros2_ws/build/doctor_engine/install.log --single-version-externally-managed install_data

@@ -1,0 +1,70 @@
+<?xml version="1.0"?>
+<robot name="wrist_model_dual">
+
+  <!-- Root link -->
+  <link name="base_link"/>
+
+  <!-- Forearm -->
+  <link name="forearm_link">
+    <visual>
+      <geometry>
+        <cylinder length="0.3" radius="0.03"/>
+      </geometry>
+      <origin xyz="0.15 0 0" rpy="0 0 1.5708"/>
+      <material name="yellow">
+        <color rgba="1 1 0 1"/>
+      </material>
+    </visual>
+  </link>
+
+  <!-- Patient wrist -->
+  <link name="wrist_pat_link">
+    <visual>
+      <geometry>
+        <box size="0.05 0.05 0.05"/>
+      </geometry>
+      <origin xyz="0.3 0.05 0"/> <!-- shifted up a bit -->
+      <material name="green">
+        <color rgba="0 1 0 1"/>
+      </material>
+    </visual>
+  </link>
+
+  <!-- Doctor wrist -->
+  <link name="wrist_doc_link">
+    <visual>
+      <geometry>
+        <box size="0.05 0.05 0.05"/>
+      </geometry>
+      <origin xyz="0.3 -0.05 0"/> <!-- shifted down a bit -->
+      <material name="blue">
+        <color rgba="0 0 1 1"/>
+      </material>
+    </visual>
+  </link>
+
+  <!-- Fixed joint: base -> forearm -->
+  <joint name="base_to_forearm" type="fixed">
+    <parent link="base_link"/>
+    <child link="forearm_link"/>
+  </joint>
+
+  <!-- Revolute joint: patient wrist -->
+  <joint name="wrist_joint_pat" type="revolute">
+    <parent link="forearm_link"/>
+    <child link="wrist_pat_link"/>
+    <origin xyz="0.3 0.05 0"/>
+    <axis xyz="0 0 1"/>
+    <limit effort="1.0" velocity="1.0" lower="-1.57" upper="1.57"/>
+  </joint>
+
+  <!-- Revolute joint: doctor wrist -->
+  <joint name="wrist_joint_doc" type="revolute">
+    <parent link="forearm_link"/>
+    <child link="wrist_doc_link"/>
+    <origin xyz="0.3 -0.05 0"/>
+    <axis xyz="0 0 1"/>
+    <limit effort="1.0" velocity="1.0" lower="-1.57" upper="1.57"/>
+  </joint>
+
+</robot>

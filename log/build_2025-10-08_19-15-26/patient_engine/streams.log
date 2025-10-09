@@ -1,0 +1,29 @@
+[4.190s] Invoking command in '/home/anas/ros2_ws/src/patient_engine': DEBUGINFOD_URLS=https://debuginfod.ubuntu.com PYTHONPATH=/home/anas/ros2_ws/build/patient_engine/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/anas/ros2_ws/install/patient_engine/lib/python3.12/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/patient_engine build --build-base /home/anas/ros2_ws/build/patient_engine/build install --record /home/anas/ros2_ws/build/patient_engine/install.log --single-version-externally-managed install_data
+[5.256s] running egg_info
+[5.304s] writing ../../build/patient_engine/patient_engine.egg-info/PKG-INFO
+[5.304s] writing dependency_links to ../../build/patient_engine/patient_engine.egg-info/dependency_links.txt
+[5.319s] writing entry points to ../../build/patient_engine/patient_engine.egg-info/entry_points.txt
+[5.320s] writing requirements to ../../build/patient_engine/patient_engine.egg-info/requires.txt
+[5.320s] writing top-level names to ../../build/patient_engine/patient_engine.egg-info/top_level.txt
+[5.453s] reading manifest file '../../build/patient_engine/patient_engine.egg-info/SOURCES.txt'
+[5.458s] writing manifest file '../../build/patient_engine/patient_engine.egg-info/SOURCES.txt'
+[5.458s] running build
+[5.458s] running build_py
+[5.459s] copying patient_engine/nodes/patient_mqtt_bridge.py -> /home/anas/ros2_ws/build/patient_engine/build/lib/patient_engine/nodes
+[5.462s] copying patient_engine/nodes/patient_node.py -> /home/anas/ros2_ws/build/patient_engine/build/lib/patient_engine/nodes
+[5.462s] running install
+[5.484s] running install_lib
+[5.558s] copying /home/anas/ros2_ws/build/patient_engine/build/lib/patient_engine/nodes/patient_mqtt_bridge.py -> /home/anas/ros2_ws/install/patient_engine/lib/python3.12/site-packages/patient_engine/nodes
+[5.561s] copying /home/anas/ros2_ws/build/patient_engine/build/lib/patient_engine/nodes/patient_node.py -> /home/anas/ros2_ws/install/patient_engine/lib/python3.12/site-packages/patient_engine/nodes
+[5.562s] byte-compiling /home/anas/ros2_ws/install/patient_engine/lib/python3.12/site-packages/patient_engine/nodes/patient_mqtt_bridge.py to patient_mqtt_bridge.cpython-312.pyc
+[5.568s] byte-compiling /home/anas/ros2_ws/install/patient_engine/lib/python3.12/site-packages/patient_engine/nodes/patient_node.py to patient_node.cpython-312.pyc
+[5.573s] running install_data
+[5.575s] running install_egg_info
+[5.631s] removing '/home/anas/ros2_ws/install/patient_engine/lib/python3.12/site-packages/patient_engine-0.0.1-py3.12.egg-info' (and everything under it)
+[5.634s] Copying ../../build/patient_engine/patient_engine.egg-info to /home/anas/ros2_ws/install/patient_engine/lib/python3.12/site-packages/patient_engine-0.0.1-py3.12.egg-info
+[5.638s] running install_scripts
+[6.142s] Installing patient_anomaly_handler script to /home/anas/ros2_ws/install/patient_engine/lib/patient_engine
+[6.142s] Installing patient_mqtt_bridge script to /home/anas/ros2_ws/install/patient_engine/lib/patient_engine
+[6.142s] Installing patient_node script to /home/anas/ros2_ws/install/patient_engine/lib/patient_engine
+[6.142s] writing list of installed files to '/home/anas/ros2_ws/build/patient_engine/install.log'
+[6.240s] Invoked command in '/home/anas/ros2_ws/src/patient_engine' returned '0': DEBUGINFOD_URLS=https://debuginfod.ubuntu.com PYTHONPATH=/home/anas/ros2_ws/build/patient_engine/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/anas/ros2_ws/install/patient_engine/lib/python3.12/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/patient_engine build --build-base /home/anas/ros2_ws/build/patient_engine/build install --record /home/anas/ros2_ws/build/patient_engine/install.log --single-version-externally-managed install_data
