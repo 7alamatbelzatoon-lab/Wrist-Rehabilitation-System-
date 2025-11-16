@@ -1,40 +1,51 @@
 from setuptools import find_packages, setup
-import os
 from glob import glob
 
 package_name = 'patient_engine'
 
 setup(
     name=package_name,
-    version='0.0.1',
+    version='0.1.1',
     packages=find_packages(exclude=['test']),
     data_files=[
         ('share/ament_index/resource_index/packages', ['resource/' + package_name]),
         ('share/' + package_name, ['package.xml']),
-        # include launch files later if you add them:
+        # Install config YAMLs so get_package_share_directory can find them
+        ('share/' + package_name + '/config', [
+            'config/motion_thresholds_beginner.yaml',
+            'config/motion_thresholds_advanced.yaml',
+        ]),
+        # If you later add launch files:
         # ('share/' + package_name + '/launch', glob('launch/*.launch.py')),
-        # include cfg files later if you add them:
-        # ('share/' + package_name + '/cfg', glob('cfg/*')),
     ],
     install_requires=[
         'setuptools',
-        'paho-mqtt',  # patient bridge uses MQTT now
+        'paho-mqtt',
+        'PyYAML',  # for profile YAML loading in motion_detector
     ],
     zip_safe=True,
     maintainer='anas',
     maintainer_email='anas@todo.todo',
-    description='Patient-side runtime (control + MQTT bridge; safety later)',
+    description='Patient-side runtime (control, detectors, orchestrator, MQTT bridge)',
     license='MIT',
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
+            # bridges
+            'patient_mqtt_bridge = patient_engine.nodes.bridges.patient_mqtt_bridge:main',
+            # detectors
+            'motion_detector = patient_engine.nodes.detectors.motion_detector:main',
+            'network_detector = patient_engine.nodes.detectors.network_detector:main',
+            # orchestrator
+            'patient_orchestrator = patient_engine.nodes.orchestrator.patient_orchestrator:main',
+            # locomotion
             'patient_node = patient_engine.nodes.patient_node:main',
-            'patient_mqtt_bridge = patient_engine.nodes.patient_mqtt_bridge:main',
-            'patient_network_anomaly_handler = patient_engine.nodes.patient_network_anomaly_handler:main',
-            'patient_motion_anomaly_handler = patient_engine.nodes.patient_motion_anomaly_handler.py:main'
-            # add later:
-            # 'safety_monitor = patient_engine.nodes.safety_monitor:main',
-            # 'patient_actuator_interface = patient_engine.nodes.patient_actuator_interface:main',
+            # supervisor
+            'stack_manager = patient_engine.nodes.stack_manager_node:main',
+            #Network Test
+            'network_detector_scenario_test = patient_engine.nodes.detectors.network_detector_scenario_test:main',
+            #Driver
+            'patient_dxl_driver = patient_engine.nodes.drivers.dxl_position_driver:main',
         ],
     },
 )

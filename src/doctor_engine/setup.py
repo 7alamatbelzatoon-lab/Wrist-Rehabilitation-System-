@@ -30,7 +30,6 @@ setup(
         'console_scripts': [
             'doctor_node = doctor_engine.nodes.doctor_node:main',
             'doctor_mqtt_bridge = doctor_engine.nodes.doctor_mqtt_bridge:main',
-            'doctor_network_anomaly_handler = doctor_engine.nodes.doctor_network_anomaly_handler:main'
             # add later if/when you create it:
             # 'doctor_actuator_interface = doctor_engine.nodes.doctor_actuator_interface:main',
         ],
