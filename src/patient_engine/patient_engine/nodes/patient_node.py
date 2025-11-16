@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 
-
 import rclpy
 from rclpy.node import Node
 from std_msgs.msg import Float32, String, Bool, Empty
@@ -8,25 +7,52 @@ import os
 from datetime import datetime
 from rclpy.qos import QoSProfile, ReliabilityPolicy, DurabilityPolicy, HistoryPolicy
 
-# Patient locomotion "dummy" executor (NORMAL timing == original)
+# Patient locomotion CONTROLLER (was "dummy" executor)
+# - CHANGED: This node is now a pure controller. It no longer simulates the plant/joint internally.
 # - Modes: NORMAL | FREEZE | SLEEP | ZERO_POSITION
-# - NORMAL: exact old behavior (10 Hz; no dt scaling; no caps; original adaptive stiffness)
-# - FREEZE: hold still (higher damping) + /patient/freeze_stable (level) & /patient/freeze/done (edge)
-# - SLEEP/ZERO: return to 0° with SOFT vs CREEP based on |angle| (node-local), then auto FREEZE
+# - NORMAL: adaptive spring–damper based on real measured joint position
+# - FREEZE: hold still around current angle + /patient/freeze_stable & /patient/freeze/done
+# - SLEEP/ZERO: generate trajectory to 0° (SOFT vs CREEP) then auto FREEZE
 # - Report-backs (patient is sole publisher):
 #     /patient/freeze/done (Empty, edge)
 #     /patient/zero_reached (Empty, edge)
 #     /patient/freeze_stable (Bool, level)
 #     /patient/at_zero (Bool, level)
-# - Kept from original: /patient/joint_position + CSV logs + adaptive stiffness logic
+# - CHANGED: Instead of publishing /patient/joint_position (simulated),
+#            the node now PUBLISHES /patient/command_position (what the motor should do)
+#            and SUBSCRIBES to /patient/joint_position (measured from hardware driver).
 
-#Define all quality of service profiles we need first for proper topic behaviors
+# 0) Sensor data
 qos_sensorData = QoSProfile(
-            history=HistoryPolicy.KEEP_LAST,
-            depth=10,
-            reliability=ReliabilityPolicy.RELIABLE,
-            durability=DurabilityPolicy.VOLATILE,
-        )
+    history=HistoryPolicy.KEEP_LAST,
+    depth=10,
+    reliability=ReliabilityPolicy.RELIABLE,
+    durability=DurabilityPolicy.VOLATILE,
+)
+
+# 1) Control command (SUB) — small, reliable, latest-only
+qos_control_cmd_sub = QoSProfile(
+    history=HistoryPolicy.KEEP_LAST,
+    depth=1,
+    reliability=ReliabilityPolicy.RELIABLE,
+    durability=DurabilityPolicy.VOLATILE,   # publisher will be TL; reader can stay Volatile
+)
+
+# 2) Status "levels" (PUB) — latched so late joiners see current state
+qos_status_level_pub = QoSProfile(
+    history=HistoryPolicy.KEEP_LAST,
+    depth=1,
+    reliability=ReliabilityPolicy.RELIABLE,
+    durability=DurabilityPolicy.TRANSIENT_LOCAL,  # latch last True/False
+)
+
+# 3) One-shot "edges" (PUB) — do NOT latch (avoid replays)
+qos_status_edge_pub = QoSProfile(
+    history=HistoryPolicy.KEEP_LAST,
+    depth=1,
+    reliability=ReliabilityPolicy.RELIABLE,
+    durability=DurabilityPolicy.VOLATILE,   # no replay
+)
 
 
 class PatientNode(Node):
@@ -34,34 +60,84 @@ class PatientNode(Node):
         super().__init__("patient_node")
 
         # Subscriptions (one publisher elsewhere)
-        self.sub_target = self.create_subscription(Float32, '/patient/target_position', self.target_callback, qos_sensorData)
-        self.sub_mode   = self.create_subscription(String,  '/patient/control_mode',   self.mode_callback,   10)
+        self.sub_target = self.create_subscription(
+            Float32,
+            '/patient/target_position',
+            self.target_callback,
+            qos_sensorData
+        )
+        self.sub_mode = self.create_subscription(
+            String,
+            '/patient/control_mode',
+            self.mode_callback,
+            qos_control_cmd_sub
+        )
 
-        # Publishers (patient is sole publisher)
-        self.pub_joint         = self.create_publisher(Float32, '/patient/joint_position', 10)
-        self.pub_freeze_done   = self.create_publisher(Empty,   '/patient/freeze/done',    10)
-        self.pub_zero_reached  = self.create_publisher(Empty,   '/patient/zero_reached',   10)
-        self.pub_freeze_stable = self.create_publisher(Bool,    '/patient/freeze_stable',  10)
-        self.pub_at_zero       = self.create_publisher(Bool,    '/patient/at_zero',        10)
+        # CHANGED: New subscription for measured joint position from hardware driver
+        self.sub_joint_meas = self.create_subscription(
+            Float32,
+            '/patient/joint_position',           # same topic name, but now we LISTEN instead of publish
+            self.joint_meas_callback,
+            qos_sensorData
+        )
 
-        # Loop timing — EXACTLY like the old node 10Hz
+        # Publishers (patient is sole publisher for status + command position)
+        # CHANGED: We no longer publish /patient/joint_position here.
+        #          Instead we publish /patient/command_position (controller output).
+        self.pub_command = self.create_publisher(
+            Float32,
+            '/patient/command_position',         # NEW: command position for the motor driver
+            qos_sensorData
+        )
+        self.pub_freeze_done = self.create_publisher(
+            Empty,
+            '/patient/freeze/done',
+            qos_status_edge_pub
+        )
+        self.pub_zero_reached = self.create_publisher(
+            Empty,
+            '/patient/zero_reached',
+            qos_status_edge_pub
+        )
+        self.pub_freeze_stable = self.create_publisher(
+            Bool,
+            '/patient/freeze_stable',
+            qos_status_level_pub
+        )
+        self.pub_at_zero = self.create_publisher(
+            Bool,
+            '/patient/at_zero',
+            qos_status_level_pub
+        )
+
+        # Loop timing — EXACTLY like the old node
         self.dt = 0.1
         self.timer = self.create_timer(self.dt, self.update_tick)
-        self.get_logger().info("Patient Node Initiated (NORMAL timing matches original).")
+        self.get_logger().info("Patient Node Initiated as CONTROLLER (NORMAL timing matches original).")
 
-        # Core state (degrees & deg/s like the original)
+        # Core state (degrees & deg/s)
         self.mode = "FREEZE"           # safe default; orchestrator switches
-        self.target_position = 0.0     # deg (from MQTT)
-        self.current_position = 0.0    # deg
-        self.velocity = 0.0            # deg/s (in NORMAL this acts like deg-per-tick; kept as-is)
+        self.target_position = 0.0     # deg (from MQTT / doctor)
+
+        # CHANGED: current_position is now MEASURED from hardware (via joint_meas_callback),
+        #          not integrated internally.
+        self.current_position = 0.0    # deg (measured joint angle)
+        self.have_joint_measurement = False  # CHANGED: flag to wait for first sensor reading
+
+        # CHANGED: velocity now represents INTERNAL COMMAND velocity (deg/s) for command_deg dynamics,
+        #          not the physical joint velocity.
+        self.velocity = 0.0            # deg/s (internal command velocity in NORMAL)
 
         # For SLEEP/ZERO: slewed command to 0°
-        self.command_deg = 0.0
-        self.command_vel_deg_s = 0.0
+        self.command_deg = 0.0         # CHANGED: treated as "commanded joint position" sent to motor
+        self.command_vel_deg_s = 0.0   # internal velocity for SLEEP/ZERO trapezoid
 
         # Measured velocity (deg/s) for stability/zero checks (unit-consistent across modes)
         self.prev_position = self.current_position
-        self.vel_meas_deg_s = 0.0
+        self.vel_meas_deg_s = 0.0      # CHANGED: this is derived from measured joint position only
+
+        # CHANGED: FREEZE hold point (where to stop)
+        self.freeze_origin_deg = 0.0   # NEW: remembers position at entry to FREEZE
 
         # === Adaptive stiffness (UNCHANGED) ===
         self.spring_k = 0.225
@@ -73,8 +149,8 @@ class PatientNode(Node):
         self.high_error_threshold = 5.0   # deg
 
         # === Profiles / FREEZE parameters (tunable later) ===
-        self.angle_min_deg = -60.0
-        self.angle_max_deg = +60.0
+        self.angle_min_deg = -65.0
+        self.angle_max_deg = +65.0
         self.creep_threshold_deg = 40.0
 
         # SOFT (gentle) / CREEP (extra gentle) for SLEEP/ZERO
@@ -106,6 +182,17 @@ class PatientNode(Node):
 
     # ---------- Callbacks ----------
 
+    def joint_meas_callback(self, msg: Float32):
+        """CHANGED: callback for measured joint position from hardware driver."""
+        pos = float(msg.data)
+        if not self.have_joint_measurement:
+            # CHANGED: initialize prev_position AND command_deg the first time to avoid jumps
+            self.prev_position = pos
+            self.command_deg = pos        # CHANGED: sync command with actual joint on first reading
+            self.freeze_origin_deg = pos  # CHANGED: reasonable default for FREEZE
+            self.have_joint_measurement = True
+        self.current_position = pos  # CHANGED: measured joint angle replaces simulated state
+
     def mode_callback(self, msg: String):
         requested = (msg.data or "").strip().upper()
         if requested not in ("NORMAL", "FREEZE", "SLEEP", "ZERO_POSITION"):
@@ -115,6 +202,7 @@ class PatientNode(Node):
             return
 
         # Hygiene at entry
+        # CHANGED: we now use current measured position as the base for command_deg when changing modes.
         self.command_deg = self.current_position
         self.command_vel_deg_s = 0.0
 
@@ -123,13 +211,20 @@ class PatientNode(Node):
             self._freeze_hold_elapsed = 0.0
             self._freeze_stable_latch = False
             self._publish_bool(self.pub_freeze_stable, False)
+            self.freeze_origin_deg = self.current_position     # CHANGED: remember hold position
         elif requested in ("SLEEP", "ZERO_POSITION"):
             self.damping_c = 0.7
             self._at_zero_hold_elapsed = 0.0
             self._at_zero_latch = False
             self._publish_bool(self.pub_at_zero, False)
+            # command_deg already set to current_position above
         else:  # NORMAL
             self.damping_c = 0.4  # original baseline
+
+        # reset INTERNAL command velocity between changing modes
+        self.velocity = 0.0              # CHANGED: interpreted as internal command velocity
+        self.prev_position = self.current_position
+        self.vel_meas_deg_s = 0.0
 
         self.mode = requested
         self.get_logger().info(f"[Patient] Mode → {self.mode}")
@@ -141,31 +236,37 @@ class PatientNode(Node):
     # ---------- Main loop ----------
 
     def update_tick(self):
+        # CHANGED: Do nothing until we have at least one real joint measurement from driver
+        if not self.have_joint_measurement:
+            return
+
         if self.mode == "NORMAL":
-            self._step_normal_original()       # EXACT old behavior
+            self._step_normal_controller()       # CHANGED: controller-only, updates command_deg
         elif self.mode == "FREEZE":
-            self._step_freeze()
+            self._step_freeze_controller()       # CHANGED: controller-only, holds freeze_origin_deg
         elif self.mode in ("SLEEP", "ZERO_POSITION"):
-            self._step_sleep_like()
+            self._step_sleep_like_controller()   # controller-only, moves command_deg → 0
         else:
-            self._step_freeze()
+            self._step_freeze_controller()
 
-        # Soft clamp ONLY outside NORMAL (keep NORMAL identical to before)
+        # CHANGED: Soft clamp is now applied to COMMAND (what we ask the motor to do),
+        #          not to the simulated current_position.
         if self.mode != "NORMAL":
-            self.current_position = self._cap(self.current_position, self.angle_min_deg, self.angle_max_deg)
+            self.command_deg = self._cap(self.command_deg, self.angle_min_deg, self.angle_max_deg)
 
-        # ---- measured velocity (deg/s) for stability checks (mode-agnostic, harmless in NORMAL) ----
+        # ---- measured velocity (deg/s) for stability checks ----
+        # CHANGED: derived from measured joint position instead of internal simulation.
         self.vel_meas_deg_s = (self.current_position - self.prev_position) / self.dt
         self.prev_position = self.current_position
 
-        # Publish joint angle
-        self.pub_joint.publish(Float32(data=float(self.current_position)))
+        # CHANGED: Publish COMMAND position instead of simulated joint position.
+        self.pub_command.publish(Float32(data=float(self.command_deg)))
 
-        # Report-backs
+        # Report-backs (same logic, using measured position/velocity)
         self._update_freeze_status()
         self._update_zero_status()
 
-        # CSV log (unchanged)
+        # CSV log (unchanged structure: target vs CURRENT MEASURED joint angle)
         now = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         try:
             with open(self.log_path, "a") as log_file:
@@ -173,20 +274,25 @@ class PatientNode(Node):
         except Exception:
             pass
 
-    # ---------- Mode implementations ----------
+    # ---------- Mode implementations (controller form) ----------
 
-    def _step_normal_original(self):
-        """EXACT original NORMAL behavior (no dt scaling, no caps)."""
-        # Error in deg
-        error = abs(self.target_position - self.current_position)
+    def _step_normal_controller(self):
+        """CHANGED: NORMAL as a pure controller (no internal plant integration)."""
+        # Error in deg based on measured joint position
+        error_signed = self.target_position - self.current_position
+        error = abs(error_signed)
 
-        # Adaptive stiffness (unchanged)
+        # Adaptive stiffness (unchanged logic)
         if error > self.high_error_threshold:
             self.spring_k = min(self.spring_k + self.k_step, self.k_max)
-            self.get_logger().info(f'[Adaptive] 🔺 High error → Increasing stiffness: k = {self.spring_k:.3f}')
+            self.get_logger().info(
+                f'[Adaptive] 🔺 High error → Increasing stiffness: k = {self.spring_k:.3f}'
+            )
         elif error < self.low_error_threshold:
             self.spring_k = max(self.spring_k - self.k_step, self.k_min)
-            self.get_logger().info(f'[Adaptive] 🔻 Low error → Decreasing stiffness: k = {self.spring_k:.3f}')
+            self.get_logger().info(
+                f'[Adaptive] 🔻 Low error → Decreasing stiffness: k = {self.spring_k:.3f}'
+            )
 
         # Log k adaptation (unchanged)
         now = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
@@ -196,31 +302,30 @@ class PatientNode(Node):
         except Exception:
             pass
 
-        # Virtual spring–damper toward target (deg space)
-        spring_force = -self.spring_k * (self.current_position - self.target_position)
-        damping_force = -self.damping_c * self.velocity
-        total_force = spring_force + damping_force
+        # Virtual spring–damper toward target (deg space), applied to COMMAND dynamics
+        spring_term = -self.spring_k * (self.current_position - self.target_position)
+        damping_term = -self.damping_c * self.velocity   # CHANGED: velocity is internal command velocity
+        total = spring_term + damping_term
 
-        # *** ORIGINAL INTEGRATION (no dt scaling, no caps) ***
-        self.velocity += total_force      # Assume unit mass
-        self.current_position += self.velocity
+        # CHANGED: integrate internal command velocity & command position (same discrete form as original)
+        self.velocity += total      # internal "command acceleration"
+        self.command_deg += self.velocity  # new command angle
 
-        # Console log (unchanged)
+        # Console log (still shows measured position)
         self.get_logger().info(
-            f'[Patient] 📐 Position: {self.current_position:.2f}° | Target: {self.target_position:.2f}° | Error: {error:.2f}°'
+            f'[Patient] 📐 Meas Pos: {self.current_position:.2f}° | Cmd: {self.command_deg:.2f}° | '
+            f'Target: {self.target_position:.2f}° | Error: {error:.2f}°'
         )
 
-    def _step_freeze(self):
-        """Hold still: higher damping to kill residual velocity (no adaptation)."""
-        spring_force = 0.0
-        damping_force = -self.damping_c * self.velocity
-        total_accel = spring_force + damping_force
-        # integrate with dt so it’s gentle (FREEZE is new, not part of original behavior)
-        self.velocity += total_accel * self.dt
-        self.current_position += self.velocity * self.dt
+    def _step_freeze_controller(self):
+        """CHANGED: FREEZE as controller — hold around freeze_origin_deg."""
+        # CHANGED: simply command the freeze_origin_deg and kill internal velocity.
+        self.command_deg = self.freeze_origin_deg
+        self.velocity = 0.0
 
-    def _step_sleep_like(self):
-        """Return to 0° using SOFT or CREEP based solely on |current angle|."""
+    def _step_sleep_like_controller(self):
+        """CHANGED: Return to 0° using SOFT or CREEP, via command trajectory only."""
+        # CHANGED: decide SOFT/CREEP based on measured angle
         abs_ang = abs(self.current_position)
         if abs_ang >= self.creep_threshold_deg:
             vmax = self.vmax_creep_deg_s
@@ -231,11 +336,15 @@ class PatientNode(Node):
 
         goal = 0.0
 
-        # Trapezoid on the command setpoint
+        # Trapezoidal profile on the COMMAND setpoint (same idea as original)
         cmd_err = goal - self.command_deg
         v_des = self._cap(cmd_err / max(self.dt, 1e-6), -vmax, vmax)
         dv_max = amax * self.dt
-        v_next = self._cap(v_des, self.command_vel_deg_s - dv_max, self.command_vel_deg_s + dv_max)
+        v_next = self._cap(
+            v_des,
+            self.command_vel_deg_s - dv_max,
+            self.command_vel_deg_s + dv_max
+        )
         self.command_vel_deg_s = v_next
         self.command_deg += self.command_vel_deg_s * self.dt
 
@@ -244,14 +353,8 @@ class PatientNode(Node):
             self.command_deg = goal
             self.command_vel_deg_s = 0.0
 
-        # Track the command with spring–damper (no adaptation here)
-        spring_force = -self.spring_k * (self.current_position - self.command_deg)
-        damping_force = -self.damping_c * self.velocity
-        total_accel = spring_force + damping_force
-        # integrate with dt & caps for gentle movement
-        total_accel = self._cap(total_accel, -amax, amax)
-        self.velocity = self._cap(self.velocity + total_accel * self.dt, -vmax, vmax)
-        self.current_position += self.velocity * self.dt
+        # CHANGED: removed extra spring–damper integration on command_deg here.
+        # The Dynamixel's internal position controller will track command_deg; we only need the trajectory.
 
     # ---------- Report-back helpers ----------
 
@@ -276,7 +379,11 @@ class PatientNode(Node):
 
     def _update_zero_status(self):
         # Use measured velocity in deg/s (consistent across modes)
-        at_zero_now = (abs(self.current_position) <= self.zero_tol_deg) and (abs(self.vel_meas_deg_s) < self.vel_stable_deg_s)
+        at_zero_now = (
+            abs(self.current_position) <= self.zero_tol_deg
+        ) and (
+            abs(self.vel_meas_deg_s) < self.vel_stable_deg_s
+        )
 
         if self.mode in ("SLEEP", "ZERO_POSITION"):
             if at_zero_now:
@@ -305,6 +412,7 @@ class PatientNode(Node):
     def _publish_bool(self, pub, value: bool):
         pub.publish(Bool(data=bool(value)))
 
+
 def main(args=None):
     rclpy.init(args=args)
     node = PatientNode()
@@ -316,6 +424,7 @@ def main(args=None):
         node.destroy_node()
         if rclpy.ok():
             rclpy.shutdown()
+
 
 if __name__ == "__main__":
     main()
