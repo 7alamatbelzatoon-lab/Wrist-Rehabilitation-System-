@@ -11,7 +11,6 @@ setup.py
 doctor_engine/__init__.py
 doctor_engine/nodes/__init__.py
 doctor_engine/nodes/doctor_mqtt_bridge.py
-doctor_engine/nodes/doctor_network_anomaly_handler.py
 doctor_engine/nodes/doctor_node.py
 resource/doctor_engine
 test/test_copyright.py

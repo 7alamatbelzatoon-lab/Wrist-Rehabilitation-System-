@@ -1,0 +1,25 @@
+[0.695s] Invoking command in '/home/anas/ros2_ws/build/wrist_replay': DEBUGINFOD_URLS=https://debuginfod.ubuntu.com PYTHONPATH=/home/anas/ros2_ws/build/wrist_replay/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/anas/ros2_ws/install/lib/python3.12/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py develop --editable --build-directory /home/anas/ros2_ws/build/wrist_replay/build --no-deps symlink_data
+[0.872s] running develop
+[0.982s] running egg_info
+[0.983s] creating wrist_replay.egg-info
+[0.994s] writing wrist_replay.egg-info/PKG-INFO
+[0.994s] writing dependency_links to wrist_replay.egg-info/dependency_links.txt
+[0.994s] writing entry points to wrist_replay.egg-info/entry_points.txt
+[0.994s] writing requirements to wrist_replay.egg-info/requires.txt
+[0.994s] writing top-level names to wrist_replay.egg-info/top_level.txt
+[0.994s] writing manifest file 'wrist_replay.egg-info/SOURCES.txt'
+[1.019s] reading manifest file 'wrist_replay.egg-info/SOURCES.txt'
+[1.019s] writing manifest file 'wrist_replay.egg-info/SOURCES.txt'
+[1.031s] running build_ext
+[1.031s] Creating /home/anas/ros2_ws/install/lib/python3.12/site-packages/wrist-replay.egg-link (link to .)
+[1.032s] Installing replay_node script to /home/anas/ros2_ws/install/lib/wrist_replay
+[1.032s] 
+[1.032s] Installed /home/anas/ros2_ws/build/wrist_replay
+[1.032s] running symlink_data
+[1.032s] symbolically linking /home/anas/ros2_ws/build/wrist_replay/resource/wrist_replay -> /home/anas/ros2_ws/install/share/ament_index/resource_index/packages
+[1.032s] symbolically linking /home/anas/ros2_ws/build/wrist_replay/package.xml -> /home/anas/ros2_ws/install/share/wrist_replay
+[1.032s] creating /home/anas/ros2_ws/install/share/wrist_replay/urdf
+[1.032s] symbolically linking /home/anas/ros2_ws/build/wrist_replay/urdf/wrist.urdf -> /home/anas/ros2_ws/install/share/wrist_replay/urdf
+[1.032s] creating /home/anas/ros2_ws/install/share/wrist_replay/launch
+[1.032s] symbolically linking /home/anas/ros2_ws/build/wrist_replay/launch/replay.launch.py -> /home/anas/ros2_ws/install/share/wrist_replay/launch
+[1.056s] Invoked command in '/home/anas/ros2_ws/build/wrist_replay' returned '0': DEBUGINFOD_URLS=https://debuginfod.ubuntu.com PYTHONPATH=/home/anas/ros2_ws/build/wrist_replay/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/anas/ros2_ws/install/lib/python3.12/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py develop --editable --build-directory /home/anas/ros2_ws/build/wrist_replay/build --no-deps symlink_data

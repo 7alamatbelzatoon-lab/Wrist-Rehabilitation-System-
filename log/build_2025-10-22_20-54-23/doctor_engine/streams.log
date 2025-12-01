@@ -1,0 +1,25 @@
+[0.691s] Invoking command in '/home/anas/ros2_ws/build/doctor_engine': DEBUGINFOD_URLS=https://debuginfod.ubuntu.com PYTHONPATH=/home/anas/ros2_ws/build/doctor_engine/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/anas/ros2_ws/install/lib/python3.12/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py develop --editable --build-directory /home/anas/ros2_ws/build/doctor_engine/build --no-deps symlink_data
+[0.867s] running develop
+[0.965s] running egg_info
+[0.965s] creating doctor_engine.egg-info
+[0.977s] writing doctor_engine.egg-info/PKG-INFO
+[0.977s] writing dependency_links to doctor_engine.egg-info/dependency_links.txt
+[0.977s] writing entry points to doctor_engine.egg-info/entry_points.txt
+[0.977s] writing requirements to doctor_engine.egg-info/requires.txt
+[0.977s] writing top-level names to doctor_engine.egg-info/top_level.txt
+[0.977s] writing manifest file 'doctor_engine.egg-info/SOURCES.txt'
+[0.998s] reading manifest file 'doctor_engine.egg-info/SOURCES.txt'
+[0.998s] writing manifest file 'doctor_engine.egg-info/SOURCES.txt'
+[1.009s] running build_ext
+[1.009s] Creating /home/anas/ros2_ws/install/lib/python3.12/site-packages/doctor-engine.egg-link (link to .)
+[1.010s] Installing doctor_mqtt_bridge script to /home/anas/ros2_ws/install/lib/doctor_engine
+[1.010s] Installing doctor_node script to /home/anas/ros2_ws/install/lib/doctor_engine
+[1.010s] 
+[1.010s] Installed /home/anas/ros2_ws/build/doctor_engine
+[1.012s] running symlink_data
+[1.012s] creating /home/anas/ros2_ws/install/share/ament_index
+[1.012s] creating /home/anas/ros2_ws/install/share/ament_index/resource_index
+[1.012s] creating /home/anas/ros2_ws/install/share/ament_index/resource_index/packages
+[1.012s] symbolically linking /home/anas/ros2_ws/build/doctor_engine/resource/doctor_engine -> /home/anas/ros2_ws/install/share/ament_index/resource_index/packages
+[1.012s] symbolically linking /home/anas/ros2_ws/build/doctor_engine/package.xml -> /home/anas/ros2_ws/install/share/doctor_engine
+[1.033s] Invoked command in '/home/anas/ros2_ws/build/doctor_engine' returned '0': DEBUGINFOD_URLS=https://debuginfod.ubuntu.com PYTHONPATH=/home/anas/ros2_ws/build/doctor_engine/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/anas/ros2_ws/install/lib/python3.12/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py develop --editable --build-directory /home/anas/ros2_ws/build/doctor_engine/build --no-deps symlink_data

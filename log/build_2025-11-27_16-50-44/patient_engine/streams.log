@@ -1,0 +1,35 @@
+[1.213s] Invoking command in '/home/anas/ros2_ws/src/patient_engine': DEBUGINFOD_URLS=https://debuginfod.ubuntu.com PYTHONPATH=/home/anas/ros2_ws/build/patient_engine/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/anas/ros2_ws/install/patient_engine/lib/python3.12/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/patient_engine build --build-base /home/anas/ros2_ws/build/patient_engine/build install --record /home/anas/ros2_ws/build/patient_engine/install.log --single-version-externally-managed install_data
+[1.373s] running egg_info
+[1.383s] writing ../../build/patient_engine/patient_engine.egg-info/PKG-INFO
+[1.384s] writing dependency_links to ../../build/patient_engine/patient_engine.egg-info/dependency_links.txt
+[1.384s] writing entry points to ../../build/patient_engine/patient_engine.egg-info/entry_points.txt
+[1.385s] writing requirements to ../../build/patient_engine/patient_engine.egg-info/requires.txt
+[1.385s] writing top-level names to ../../build/patient_engine/patient_engine.egg-info/top_level.txt
+[1.407s] reading manifest file '../../build/patient_engine/patient_engine.egg-info/SOURCES.txt'
+[1.410s] writing manifest file '../../build/patient_engine/patient_engine.egg-info/SOURCES.txt'
+[1.410s] running build
+[1.410s] running build_py
+[1.410s] copying patient_engine/nodes/patient_node.py -> /home/anas/ros2_ws/build/patient_engine/build/lib/patient_engine/nodes
+[1.410s] copying patient_engine/nodes/drivers/patient_current_controller.py -> /home/anas/ros2_ws/build/patient_engine/build/lib/patient_engine/nodes/drivers
+[1.410s] running install
+[1.415s] running install_lib
+[1.425s] copying /home/anas/ros2_ws/build/patient_engine/build/lib/patient_engine/nodes/patient_node.py -> /home/anas/ros2_ws/install/patient_engine/lib/python3.12/site-packages/patient_engine/nodes
+[1.425s] copying /home/anas/ros2_ws/build/patient_engine/build/lib/patient_engine/nodes/drivers/patient_current_controller.py -> /home/anas/ros2_ws/install/patient_engine/lib/python3.12/site-packages/patient_engine/nodes/drivers
+[1.427s] byte-compiling /home/anas/ros2_ws/install/patient_engine/lib/python3.12/site-packages/patient_engine/nodes/patient_node.py to patient_node.cpython-312.pyc
+[1.433s] byte-compiling /home/anas/ros2_ws/install/patient_engine/lib/python3.12/site-packages/patient_engine/nodes/drivers/patient_current_controller.py to patient_current_controller.cpython-312.pyc
+[1.433s] running install_data
+[1.433s] running install_egg_info
+[1.443s] removing '/home/anas/ros2_ws/install/patient_engine/lib/python3.12/site-packages/patient_engine-0.1.1-py3.12.egg-info' (and everything under it)
+[1.446s] Copying ../../build/patient_engine/patient_engine.egg-info to /home/anas/ros2_ws/install/patient_engine/lib/python3.12/site-packages/patient_engine-0.1.1-py3.12.egg-info
+[1.448s] running install_scripts
+[1.538s] Installing motion_detector script to /home/anas/ros2_ws/install/patient_engine/lib/patient_engine
+[1.538s] Installing network_detector script to /home/anas/ros2_ws/install/patient_engine/lib/patient_engine
+[1.538s] Installing network_detector_scenario_test script to /home/anas/ros2_ws/install/patient_engine/lib/patient_engine
+[1.539s] Installing patient_current_controller script to /home/anas/ros2_ws/install/patient_engine/lib/patient_engine
+[1.539s] Installing patient_dxl_driver script to /home/anas/ros2_ws/install/patient_engine/lib/patient_engine
+[1.539s] Installing patient_mqtt_bridge script to /home/anas/ros2_ws/install/patient_engine/lib/patient_engine
+[1.540s] Installing patient_node script to /home/anas/ros2_ws/install/patient_engine/lib/patient_engine
+[1.540s] Installing patient_orchestrator script to /home/anas/ros2_ws/install/patient_engine/lib/patient_engine
+[1.541s] Installing stack_manager script to /home/anas/ros2_ws/install/patient_engine/lib/patient_engine
+[1.542s] writing list of installed files to '/home/anas/ros2_ws/build/patient_engine/install.log'
+[1.567s] Invoked command in '/home/anas/ros2_ws/src/patient_engine' returned '0': DEBUGINFOD_URLS=https://debuginfod.ubuntu.com PYTHONPATH=/home/anas/ros2_ws/build/patient_engine/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/anas/ros2_ws/install/patient_engine/lib/python3.12/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/patient_engine build --build-base /home/anas/ros2_ws/build/patient_engine/build install --record /home/anas/ros2_ws/build/patient_engine/install.log --single-version-externally-managed install_data

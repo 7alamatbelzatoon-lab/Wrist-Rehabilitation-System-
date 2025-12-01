@@ -1,0 +1,11 @@
+motion_detector:
+  thresholds:
+    max_angle: 85.0
+    max_velocity: 30.0
+    max_acceleration: 10.0
+    max_torque: 15.0
+    stuck_time: 2.0
+    drift_angle: 15.0
+    drift_time: 2.0
+    oscillation_zcr_rate: 10.0
+  hysteresis_time: 2.0

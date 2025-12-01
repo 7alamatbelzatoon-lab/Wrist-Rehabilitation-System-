@@ -1,0 +1,7 @@
+=== POLICY (MOTION_* audit re-emits) ===
+
+=== POLICY (mode changes) ===
+[INFO] [1760059230.457492497] [safety_policy_manager]: [policy] mode=normal freeze=False
+
+=== SAFE FSM (patient node SafeMode logs) ===
+

@@ -1,0 +1,77 @@
+running develop
+running egg_info
+writing ../../build/patient_engine/patient_engine.egg-info/PKG-INFO
+writing dependency_links to ../../build/patient_engine/patient_engine.egg-info/dependency_links.txt
+writing entry points to ../../build/patient_engine/patient_engine.egg-info/entry_points.txt
+writing requirements to ../../build/patient_engine/patient_engine.egg-info/requires.txt
+writing top-level names to ../../build/patient_engine/patient_engine.egg-info/top_level.txt
+reading manifest file '../../build/patient_engine/patient_engine.egg-info/SOURCES.txt'
+writing manifest file '../../build/patient_engine/patient_engine.egg-info/SOURCES.txt'
+running build
+running build_py
+creating /home/anas/ros2_ws/build/patient_engine/build
+creating /home/anas/ros2_ws/build/patient_engine/build/lib
+creating /home/anas/ros2_ws/build/patient_engine/build/lib/patient_engine
+copying patient_engine/__init__.py -> /home/anas/ros2_ws/build/patient_engine/build/lib/patient_engine
+creating /home/anas/ros2_ws/build/patient_engine/build/lib/patient_engine/nodes
+copying patient_engine/nodes/patient_node.py -> /home/anas/ros2_ws/build/patient_engine/build/lib/patient_engine/nodes
+copying patient_engine/nodes/__init__.py -> /home/anas/ros2_ws/build/patient_engine/build/lib/patient_engine/nodes
+copying patient_engine/nodes/stack_manager_node.py -> /home/anas/ros2_ws/build/patient_engine/build/lib/patient_engine/nodes
+creating /home/anas/ros2_ws/build/patient_engine/build/lib/patient_engine/nodes/bridges
+copying patient_engine/nodes/bridges/patient_mqtt_bridge.py -> /home/anas/ros2_ws/build/patient_engine/build/lib/patient_engine/nodes/bridges
+copying patient_engine/nodes/bridges/__init__.py -> /home/anas/ros2_ws/build/patient_engine/build/lib/patient_engine/nodes/bridges
+creating /home/anas/ros2_ws/build/patient_engine/build/lib/patient_engine/nodes/orchestrator
+copying patient_engine/nodes/orchestrator/patient_orchestrator.py -> /home/anas/ros2_ws/build/patient_engine/build/lib/patient_engine/nodes/orchestrator
+copying patient_engine/nodes/orchestrator/__init__.py -> /home/anas/ros2_ws/build/patient_engine/build/lib/patient_engine/nodes/orchestrator
+creating /home/anas/ros2_ws/build/patient_engine/build/lib/patient_engine/nodes/detectors
+copying patient_engine/nodes/detectors/network_detector.py -> /home/anas/ros2_ws/build/patient_engine/build/lib/patient_engine/nodes/detectors
+copying patient_engine/nodes/detectors/motion_detector.py -> /home/anas/ros2_ws/build/patient_engine/build/lib/patient_engine/nodes/detectors
+copying patient_engine/nodes/detectors/__init__.py -> /home/anas/ros2_ws/build/patient_engine/build/lib/patient_engine/nodes/detectors
+running install
+running install_lib
+creating /home/anas/ros2_ws/install/patient_engine/lib/python3.12/site-packages/patient_engine
+creating /home/anas/ros2_ws/install/patient_engine/lib/python3.12/site-packages/patient_engine/nodes
+copying /home/anas/ros2_ws/build/patient_engine/build/lib/patient_engine/nodes/patient_node.py -> /home/anas/ros2_ws/install/patient_engine/lib/python3.12/site-packages/patient_engine/nodes
+creating /home/anas/ros2_ws/install/patient_engine/lib/python3.12/site-packages/patient_engine/nodes/bridges
+copying /home/anas/ros2_ws/build/patient_engine/build/lib/patient_engine/nodes/bridges/patient_mqtt_bridge.py -> /home/anas/ros2_ws/install/patient_engine/lib/python3.12/site-packages/patient_engine/nodes/bridges
+copying /home/anas/ros2_ws/build/patient_engine/build/lib/patient_engine/nodes/bridges/__init__.py -> /home/anas/ros2_ws/install/patient_engine/lib/python3.12/site-packages/patient_engine/nodes/bridges
+copying /home/anas/ros2_ws/build/patient_engine/build/lib/patient_engine/nodes/__init__.py -> /home/anas/ros2_ws/install/patient_engine/lib/python3.12/site-packages/patient_engine/nodes
+copying /home/anas/ros2_ws/build/patient_engine/build/lib/patient_engine/nodes/stack_manager_node.py -> /home/anas/ros2_ws/install/patient_engine/lib/python3.12/site-packages/patient_engine/nodes
+creating /home/anas/ros2_ws/install/patient_engine/lib/python3.12/site-packages/patient_engine/nodes/orchestrator
+copying /home/anas/ros2_ws/build/patient_engine/build/lib/patient_engine/nodes/orchestrator/patient_orchestrator.py -> /home/anas/ros2_ws/install/patient_engine/lib/python3.12/site-packages/patient_engine/nodes/orchestrator
+copying /home/anas/ros2_ws/build/patient_engine/build/lib/patient_engine/nodes/orchestrator/__init__.py -> /home/anas/ros2_ws/install/patient_engine/lib/python3.12/site-packages/patient_engine/nodes/orchestrator
+creating /home/anas/ros2_ws/install/patient_engine/lib/python3.12/site-packages/patient_engine/nodes/detectors
+copying /home/anas/ros2_ws/build/patient_engine/build/lib/patient_engine/nodes/detectors/network_detector.py -> /home/anas/ros2_ws/install/patient_engine/lib/python3.12/site-packages/patient_engine/nodes/detectors
+copying /home/anas/ros2_ws/build/patient_engine/build/lib/patient_engine/nodes/detectors/motion_detector.py -> /home/anas/ros2_ws/install/patient_engine/lib/python3.12/site-packages/patient_engine/nodes/detectors
+copying /home/anas/ros2_ws/build/patient_engine/build/lib/patient_engine/nodes/detectors/__init__.py -> /home/anas/ros2_ws/install/patient_engine/lib/python3.12/site-packages/patient_engine/nodes/detectors
+copying /home/anas/ros2_ws/build/patient_engine/build/lib/patient_engine/__init__.py -> /home/anas/ros2_ws/install/patient_engine/lib/python3.12/site-packages/patient_engine
+byte-compiling /home/anas/ros2_ws/install/patient_engine/lib/python3.12/site-packages/patient_engine/nodes/patient_node.py to patient_node.cpython-312.pyc
+byte-compiling /home/anas/ros2_ws/install/patient_engine/lib/python3.12/site-packages/patient_engine/nodes/bridges/patient_mqtt_bridge.py to patient_mqtt_bridge.cpython-312.pyc
+byte-compiling /home/anas/ros2_ws/install/patient_engine/lib/python3.12/site-packages/patient_engine/nodes/bridges/__init__.py to __init__.cpython-312.pyc
+byte-compiling /home/anas/ros2_ws/install/patient_engine/lib/python3.12/site-packages/patient_engine/nodes/__init__.py to __init__.cpython-312.pyc
+byte-compiling /home/anas/ros2_ws/install/patient_engine/lib/python3.12/site-packages/patient_engine/nodes/stack_manager_node.py to stack_manager_node.cpython-312.pyc
+byte-compiling /home/anas/ros2_ws/install/patient_engine/lib/python3.12/site-packages/patient_engine/nodes/orchestrator/patient_orchestrator.py to patient_orchestrator.cpython-312.pyc
+byte-compiling /home/anas/ros2_ws/install/patient_engine/lib/python3.12/site-packages/patient_engine/nodes/orchestrator/__init__.py to __init__.cpython-312.pyc
+byte-compiling /home/anas/ros2_ws/install/patient_engine/lib/python3.12/site-packages/patient_engine/nodes/detectors/network_detector.py to network_detector.cpython-312.pyc
+byte-compiling /home/anas/ros2_ws/install/patient_engine/lib/python3.12/site-packages/patient_engine/nodes/detectors/motion_detector.py to motion_detector.cpython-312.pyc
+byte-compiling /home/anas/ros2_ws/install/patient_engine/lib/python3.12/site-packages/patient_engine/nodes/detectors/__init__.py to __init__.cpython-312.pyc
+byte-compiling /home/anas/ros2_ws/install/patient_engine/lib/python3.12/site-packages/patient_engine/__init__.py to __init__.cpython-312.pyc
+running install_data
+creating /home/anas/ros2_ws/install/patient_engine/share/ament_index
+creating /home/anas/ros2_ws/install/patient_engine/share/ament_index/resource_index
+creating /home/anas/ros2_ws/install/patient_engine/share/ament_index/resource_index/packages
+copying resource/patient_engine -> /home/anas/ros2_ws/install/patient_engine/share/ament_index/resource_index/packages
+copying package.xml -> /home/anas/ros2_ws/install/patient_engine/share/patient_engine
+creating /home/anas/ros2_ws/install/patient_engine/share/patient_engine/config
+copying config/motion_thresholds_beginner.yaml -> /home/anas/ros2_ws/install/patient_engine/share/patient_engine/config
+copying config/motion_thresholds_advanced.yaml -> /home/anas/ros2_ws/install/patient_engine/share/patient_engine/config
+running install_egg_info
+Copying ../../build/patient_engine/patient_engine.egg-info to /home/anas/ros2_ws/install/patient_engine/lib/python3.12/site-packages/patient_engine-0.1.1-py3.12.egg-info
+running install_scripts
+Installing motion_detector script to /home/anas/ros2_ws/install/patient_engine/lib/patient_engine
+Installing network_detector script to /home/anas/ros2_ws/install/patient_engine/lib/patient_engine
+Installing patient_mqtt_bridge script to /home/anas/ros2_ws/install/patient_engine/lib/patient_engine
+Installing patient_node script to /home/anas/ros2_ws/install/patient_engine/lib/patient_engine
+Installing patient_orchestrator script to /home/anas/ros2_ws/install/patient_engine/lib/patient_engine
+Installing stack_manager script to /home/anas/ros2_ws/install/patient_engine/lib/patient_engine
+writing list of installed files to '/home/anas/ros2_ws/build/patient_engine/install.log'

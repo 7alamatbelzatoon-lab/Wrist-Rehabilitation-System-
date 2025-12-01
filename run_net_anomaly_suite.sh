@@ -31,7 +31,7 @@ HIVEMQ_HOST="bea7b081570a4e03a77248e8b07072d9.s1.eu.hivemq.cloud"
 MOVE_A_S=3       # Scenario A: give time to move toward 60°
 MOVE_B_S=3       # Scenario B: give time to move toward 60°
 MOVE_C_S=1.6     # Scenario C: short nudge toward 40°
-SLEEP_AFTER_RESTART=10   # let system stabilize after bridge restarts
+SLEEP_AFTER_RESTART=20   # let system stabilize after bridge restarts (was 15)
 WARMUP=5
 
 mkdir -p "$LOGDIR"
@@ -84,7 +84,7 @@ ros2 run patient_engine patient_node                        >"$PAT_NODE"   2>&1 
 start_patient_mqtt
 ros2 run patient_engine patient_network_anomaly_handler      >"$PAT_ANOM"   2>&1 & P_PAT_ANOM=$!
 ros2 run doctor_engine  doctor_node                          >"$DOC_NODE"   2>&1 & P_DOC_NODE=$!
-ros2 run doctor_engine  doctor_network_anomaly_handler       >>"$DOC_MQTT" 2>&1 & P_DOC_ANOM=$!
+ros2 run doctor_engine  doctor_network_anomaly_handler       >>"$DOC_MQTT"  2>&1 & P_DOC_ANOM=$!
 start_doctor_mqtt
 
 # --- Wait helper ---
@@ -163,6 +163,10 @@ sleep 2
 sudo iptables -D OUTPUT -p tcp --dport 8883 -d "$BROKER_IP" -j DROP
 echo "[NET] unblocked broker $BROKER_IP:8883"
 sleep "$SLEEP_AFTER_RESTART"
+
+# --- New explicit check for CLEAR ---
+echo "[assert] waiting for CLEAR → mode=normal after Scenario D"
+wait_for_log "CLEAR → mode=normal" "$PAT_ANOM" 30 || echo "[warn] CLEAR not yet; will re-check in final validation"
 
 # ========== Scenario E: High latency ==========
 echo

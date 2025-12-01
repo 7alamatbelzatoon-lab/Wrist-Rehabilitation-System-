@@ -1,0 +1,23 @@
+running develop
+running egg_info
+creating wrist_replay.egg-info
+writing wrist_replay.egg-info/PKG-INFO
+writing dependency_links to wrist_replay.egg-info/dependency_links.txt
+writing entry points to wrist_replay.egg-info/entry_points.txt
+writing requirements to wrist_replay.egg-info/requires.txt
+writing top-level names to wrist_replay.egg-info/top_level.txt
+writing manifest file 'wrist_replay.egg-info/SOURCES.txt'
+reading manifest file 'wrist_replay.egg-info/SOURCES.txt'
+writing manifest file 'wrist_replay.egg-info/SOURCES.txt'
+running build_ext
+Creating /home/anas/ros2_ws/install/lib/python3.12/site-packages/wrist-replay.egg-link (link to .)
+Installing replay_node script to /home/anas/ros2_ws/install/lib/wrist_replay
+
+Installed /home/anas/ros2_ws/build/wrist_replay
+running symlink_data
+symbolically linking /home/anas/ros2_ws/build/wrist_replay/resource/wrist_replay -> /home/anas/ros2_ws/install/share/ament_index/resource_index/packages
+symbolically linking /home/anas/ros2_ws/build/wrist_replay/package.xml -> /home/anas/ros2_ws/install/share/wrist_replay
+creating /home/anas/ros2_ws/install/share/wrist_replay/urdf
+symbolically linking /home/anas/ros2_ws/build/wrist_replay/urdf/wrist.urdf -> /home/anas/ros2_ws/install/share/wrist_replay/urdf
+creating /home/anas/ros2_ws/install/share/wrist_replay/launch
+symbolically linking /home/anas/ros2_ws/build/wrist_replay/launch/replay.launch.py -> /home/anas/ros2_ws/install/share/wrist_replay/launch

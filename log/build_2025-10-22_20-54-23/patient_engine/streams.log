@@ -1,0 +1,29 @@
+[0.689s] Invoking command in '/home/anas/ros2_ws/build/patient_engine': DEBUGINFOD_URLS=https://debuginfod.ubuntu.com PYTHONPATH=/home/anas/ros2_ws/build/patient_engine/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/anas/ros2_ws/install/lib/python3.12/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py develop --editable --build-directory /home/anas/ros2_ws/build/patient_engine/build --no-deps symlink_data
+[0.864s] running develop
+[0.966s] running egg_info
+[0.966s] creating patient_engine.egg-info
+[0.979s] writing patient_engine.egg-info/PKG-INFO
+[0.979s] writing dependency_links to patient_engine.egg-info/dependency_links.txt
+[0.979s] writing entry points to patient_engine.egg-info/entry_points.txt
+[0.979s] writing requirements to patient_engine.egg-info/requires.txt
+[0.979s] writing top-level names to patient_engine.egg-info/top_level.txt
+[0.980s] writing manifest file 'patient_engine.egg-info/SOURCES.txt'
+[1.000s] reading manifest file 'patient_engine.egg-info/SOURCES.txt'
+[1.001s] writing manifest file 'patient_engine.egg-info/SOURCES.txt'
+[1.013s] running build_ext
+[1.013s] Creating /home/anas/ros2_ws/install/lib/python3.12/site-packages/patient-engine.egg-link (link to .)
+[1.014s] Installing motion_detector script to /home/anas/ros2_ws/install/lib/patient_engine
+[1.015s] Installing network_detector script to /home/anas/ros2_ws/install/lib/patient_engine
+[1.015s] Installing patient_mqtt_bridge script to /home/anas/ros2_ws/install/lib/patient_engine
+[1.015s] Installing patient_node script to /home/anas/ros2_ws/install/lib/patient_engine
+[1.015s] Installing patient_orchestrator script to /home/anas/ros2_ws/install/lib/patient_engine
+[1.015s] Installing stack_manager script to /home/anas/ros2_ws/install/lib/patient_engine
+[1.015s] 
+[1.015s] Installed /home/anas/ros2_ws/build/patient_engine
+[1.015s] running symlink_data
+[1.016s] symbolically linking /home/anas/ros2_ws/build/patient_engine/resource/patient_engine -> /home/anas/ros2_ws/install/share/ament_index/resource_index/packages
+[1.016s] symbolically linking /home/anas/ros2_ws/build/patient_engine/package.xml -> /home/anas/ros2_ws/install/share/patient_engine
+[1.016s] creating /home/anas/ros2_ws/install/share/patient_engine/config
+[1.016s] symbolically linking /home/anas/ros2_ws/build/patient_engine/config/motion_thresholds_beginner.yaml -> /home/anas/ros2_ws/install/share/patient_engine/config
+[1.016s] symbolically linking /home/anas/ros2_ws/build/patient_engine/config/motion_thresholds_advanced.yaml -> /home/anas/ros2_ws/install/share/patient_engine/config
+[1.038s] Invoked command in '/home/anas/ros2_ws/build/patient_engine' returned '0': DEBUGINFOD_URLS=https://debuginfod.ubuntu.com PYTHONPATH=/home/anas/ros2_ws/build/patient_engine/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/anas/ros2_ws/install/lib/python3.12/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py develop --editable --build-directory /home/anas/ros2_ws/build/patient_engine/build --no-deps symlink_data

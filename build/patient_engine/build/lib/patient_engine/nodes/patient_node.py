@@ -1,247 +1,419 @@
 #!/usr/bin/env python3
+
 import rclpy
 from rclpy.node import Node
-from std_msgs.msg import Float32, String, Bool
+from std_msgs.msg import Float32, String, Bool, Empty
 import os
 from datetime import datetime
-from enum import Enum
+from rclpy.qos import QoSProfile, ReliabilityPolicy, DurabilityPolicy, HistoryPolicy
 
+# Patient locomotion CONTROLLER (was "dummy" executor)
+# - CHANGED: This node is now a pure controller. It no longer simulates the plant/joint internally.
+# - Modes: NORMAL | FREEZE | SLEEP | ZERO_POSITION
+# - NORMAL: adaptive spring–damper based on real measured joint position
+# - FREEZE: hold still around current angle + /patient/freeze_stable & /patient/freeze/done
+# - SLEEP/ZERO: generate trajectory to 0° (SOFT vs CREEP) then auto FREEZE
+# - Report-backs (patient is sole publisher):
+#     /patient/freeze/done (Empty, edge)
+#     /patient/zero_reached (Empty, edge)
+#     /patient/freeze_stable (Bool, level)
+#     /patient/at_zero (Bool, level)
+# - CHANGED: Instead of publishing /patient/joint_position (simulated),
+#            the node now PUBLISHES /patient/command_position (what the motor should do)
+#            and SUBSCRIBES to /patient/joint_position (measured from hardware driver).
 
-class SafeState(Enum):
-    IDLE = 0
-    HOLD_SAFE = 1
-    CREEP_TO_SAFE = 2   # very gentle nudge toward neutral
-    SOFT_RETURN = 3     # smooth return to zero
+# 0) Sensor data
+qos_sensorData = QoSProfile(
+    history=HistoryPolicy.KEEP_LAST,
+    depth=10,
+    reliability=ReliabilityPolicy.RELIABLE,
+    durability=DurabilityPolicy.VOLATILE,
+)
+
+# 1) Control command (SUB) — small, reliable, latest-only
+qos_control_cmd_sub = QoSProfile(
+    history=HistoryPolicy.KEEP_LAST,
+    depth=1,
+    reliability=ReliabilityPolicy.RELIABLE,
+    durability=DurabilityPolicy.VOLATILE,   # publisher will be TL; reader can stay Volatile
+)
+
+# 2) Status "levels" (PUB) — latched so late joiners see current state
+qos_status_level_pub = QoSProfile(
+    history=HistoryPolicy.KEEP_LAST,
+    depth=1,
+    reliability=ReliabilityPolicy.RELIABLE,
+    durability=DurabilityPolicy.TRANSIENT_LOCAL,  # latch last True/False
+)
+
+# 3) One-shot "edges" (PUB) — do NOT latch (avoid replays)
+qos_status_edge_pub = QoSProfile(
+    history=HistoryPolicy.KEEP_LAST,
+    depth=1,
+    reliability=ReliabilityPolicy.RELIABLE,
+    durability=DurabilityPolicy.VOLATILE,   # no replay
+)
 
 
 class PatientNode(Node):
     def __init__(self):
         super().__init__("patient_node")
 
-        # --- I/O ---
-        self.sub_target = self.create_subscription(Float32, '/patient/target_position', self.target_callback, 10)
-        self.pub_joint  = self.create_publisher(Float32, '/patient/joint_position', 10)
+        # Subscriptions 
+        self.sub_target = self.create_subscription(
+            Float32,
+            '/patient/target_position',
+            self.target_callback,
+            qos_sensorData
+        )
+        self.sub_mode = self.create_subscription(
+            String,
+            '/patient/control_mode',
+            self.mode_callback,
+            qos_control_cmd_sub
+        )
 
-        # Control from anomaly handler
-        self.sub_mode   = self.create_subscription(String, '/patient/control_mode', self.mode_callback, 10)
-        self.sub_freeze = self.create_subscription(Bool,   '/patient/freeze',       self.freeze_callback, 10)
+        # CHANGED: New subscription for measured joint position from hardware driver
+        self.sub_joint_meas = self.create_subscription(
+            Float32,
+            '/patient/joint_position',           # same topic name, but now we LISTEN instead of publish for HIL
+            self.joint_meas_callback,
+            qos_sensorData
+        )
 
-        # --- Plant state ---
-        self.target_position  = 0.0
-        self.current_position = 0.0
-        self.velocity         = 0.0
+        # Publishers (patient is sole publisher for status + command position)
+        # CHANGED: We no longer publish /patient/joint_position here.
+        #          Instead we publish /patient/command_position (controller output).
+        self.pub_command = self.create_publisher(
+            Float32,
+            '/patient/command_position',         # NEW: command position for the motor driver HIL
+            qos_sensorData
+        )
+        self.pub_freeze_done = self.create_publisher(
+            Empty,
+            '/patient/freeze/done',
+            qos_status_edge_pub
+        )
+        self.pub_zero_reached = self.create_publisher(
+            Empty,
+            '/patient/zero_reached',
+            qos_status_edge_pub
+        )
+        self.pub_freeze_stable = self.create_publisher(
+            Bool,
+            '/patient/freeze_stable',
+            qos_status_level_pub
+        )
+        self.pub_at_zero = self.create_publisher(
+            Bool,
+            '/patient/at_zero',
+            qos_status_level_pub
+        )
 
-        # --- Baseline (normal) impedance ---
-        self.spring_k  = 0.225
-        self.damping_c = 0.4
+        # Loop timing — EXACTLY like the old node
+        self.dt = 0.1
+        self.timer = self.create_timer(self.dt, self.update_tick)
+        self.get_logger().info("Patient Node Initiated as CONTROLLER (NORMAL timing matches original).")
 
-        # --- Adaptive stiffness (normal mode only) ---
+        # Core state (degrees & deg/s)
+        self.mode = "FREEZE"           # safe default; orchestrator switches
+        self.target_position = 0.0     # deg (from MQTT / doctor)
+
+        # CHANGED: current_position is now MEASURED from hardware (via joint_meas_callback),
+        #          not integrated internally.
+        self.current_position = 0.0    # deg (measured joint angle)
+        self.have_joint_measurement = False  # CHANGED: flag to wait for first sensor reading
+
+        # CHANGED: velocity now represents INTERNAL COMMAND velocity (deg/s) for command_deg dynamics,
+        #          not the physical joint velocity.
+        self.velocity = 0.0            # deg/s (internal command velocity in NORMAL)
+
+        # For SLEEP/ZERO: slewed command to 0°
+        self.command_deg = 0.0         # CHANGED: treated as "commanded joint position" sent to motor
+        self.command_vel_deg_s = 0.0   # internal velocity for SLEEP/ZERO trapezoid
+
+        # Measured velocity (deg/s) for stability/zero checks (unit-consistent across modes)
+        self.prev_position = self.current_position
+        self.vel_meas_deg_s = 0.0      # CHANGED: this is derived from measured joint position only
+
+        # CHANGED: FREEZE hold point (where to stop)
+        self.freeze_origin_deg = 0.0   # NEW: remembers position at entry to FREEZE
+
+        #Swappable Controller logic
+        # === Adaptive stiffness (UNCHANGED) ===
+        self.spring_k = 0.225
+        self.damping_c = 0.4  # baseline damping (NORMAL)
         self.k_min = 0.05
         self.k_max = 0.5
         self.k_step = 0.01
         self.low_error_threshold  = 1.0   # deg
         self.high_error_threshold = 5.0   # deg
 
-        # --- Safe-mode parameters ---
-        self.neutral_deg = 0.0
+        # === Profiles / FREEZE parameters (tunable later) ===
+        self.angle_min_deg = -65.0
+        self.angle_max_deg = +65.0
+        self.creep_threshold_deg = 40.0
 
-        # HOLD_SAFE (Stage A)
-        self.t_release_s = 2.5            # wait in HOLD before moving
-        self.hold_d      = 0.8            # increase damping during HOLD
+        # SOFT (gentle) / CREEP (extra gentle) for SLEEP/ZERO
+        self.vmax_soft_deg_s   = 40.0
+        self.amax_soft_deg_s2  = 150.0
+        self.vmax_creep_deg_s  = 15.0
+        self.amax_creep_deg_s2 = 60.0
 
-        # CREEP_TO_SAFE (Stage A+)
-        self.creep_allow_window_deg = 90.0  # allow creep from anywhere within ±90°
-        self.creep_k           = 0.02       # very soft spring toward neutral
-        self.creep_vmax_deg_s  = 6.0        # comfortable but safe
+        # FREEZE uses higher damping to settle fast
+        self.freeze_damping_c = 1.0
 
-        # SOFT_RETURN (Stage B)
-        self.safe_zone_deg     = 40.0       # if |pos-0| ≤ 40°, go to soft return
-        self.soft_k            = 0.08
-        self.soft_vmax_deg_s   = 12.0
-        self.soft_done_eps     = 2.5        # consider done within ±2.5°
+        # Stabilization / zero detection (debounced)
+        self.zero_tol_deg     = 0.5
+        self.vel_stable_deg_s = 2.0
+        self.hold_time_s      = 0.5
 
-        # Mode & FSM
-        self.mode = 'normal'    # 'normal' | 'passive' | 'estop'  (from anomaly handler)
-        self.freeze = False     # Bool (from anomaly handler)
-        self.safe_state = SafeState.IDLE
-        self.state_enter_time = None
+        self._freeze_hold_elapsed = 0.0
+        self._at_zero_hold_elapsed = 0.0
+        self._freeze_stable_latch = False
+        self._at_zero_latch = False
 
-        # --- Timer ---
-        self.dt = 0.1
-        self.create_timer(self.dt, self.update_position)
+        # CSV logs 
+        self.log_path = os.path.expanduser('~/ros2_ws/adaptive_log.csv')            #Change directory based on your system here
+        with open(self.log_path, "w") as log_file:
+            log_file.write("Time,Target,Current\n")                                 #Keep this for the 3d replay or change both (in replay node)
+        self.k_log_path = os.path.expanduser('~/ros2_ws/stiffness_log.csv')           
+        with open(self.k_log_path, "w") as k_log_file:                              #Stiffness logs 
+            k_log_file.write("Time,Error,Stiffness_k\n")
 
-        # --- Logs ---
-        self.get_logger().info("Patient Node Initiated.")
-        self.log_path   = os.path.expanduser('~/ros2_ws/adaptive_log.csv')
-        self.k_log_path = os.path.expanduser('~/ros2_ws/stiffness_log.csv')
-        # richer adaptive log that matches actual control
-        with open(self.log_path, "w") as f:
-            f.write("Time,Target,EffTarget,Current,Mode,SafeState,k_used,c_used,vmax_s,ErrToDoctor,ErrToEff\n")
-        # keep the stiffness log but include both error views + k_used
-        with open(self.k_log_path, "w") as f:
-            f.write("Time,ErrorToDoctor,ErrorToEff,k_used\n")
+    # ---------- Callbacks ----------
 
-    # ------------------- Callbacks -------------------
+    def joint_meas_callback(self, msg: Float32):
+        """CHANGED: callback for measured joint position from hardware driver."""
+        pos = float(msg.data)
+        if not self.have_joint_measurement:
+            # CHANGED: initialize prev_position AND command_deg the first time to avoid jumps
+            self.prev_position = pos
+            self.command_deg = pos        # CHANGED: sync command with actual joint on first reading
+            self.freeze_origin_deg = pos  # CHANGED: reasonable default for FREEZE
+            self.have_joint_measurement = True
+        self.current_position = pos  # CHANGED: measured joint angle replaces simulated state
+
+    def mode_callback(self, msg: String):
+        requested = (msg.data or "").strip().upper()
+        if requested not in ("NORMAL", "FREEZE", "SLEEP", "ZERO_POSITION"):
+            self.get_logger().warn(f"[Patient] Unknown mode '{requested}' ignored.")
+            return
+        if requested == self.mode:
+            return
+
+        # Hygiene at entry
+        # CHANGED: we now use current measured position as the base for command_deg when changing modes.
+        self.command_deg = self.current_position
+        self.command_vel_deg_s = 0.0
+
+        if requested == "FREEZE":
+            self.damping_c = self.freeze_damping_c
+            self._freeze_hold_elapsed = 0.0
+            self._freeze_stable_latch = False
+            self._publish_bool(self.pub_freeze_stable, False)
+            self.freeze_origin_deg = self.current_position     # CHANGED: remember hold position
+        elif requested in ("SLEEP", "ZERO_POSITION"):
+            self.damping_c = 0.7
+            self._at_zero_hold_elapsed = 0.0
+            self._at_zero_latch = False
+            self._publish_bool(self.pub_at_zero, False)
+            # command_deg already set to current_position above
+        else:  # NORMAL
+            self.damping_c = 0.4  # original baseline
+
+        # reset INTERNAL command velocity between changing modes
+        self.velocity = 0.0              # CHANGED: interpreted as internal command velocity
+        self.prev_position = self.current_position
+        self.vel_meas_deg_s = 0.0
+
+        self.mode = requested
+        self.get_logger().info(f"[Patient] Mode → {self.mode}")
+
     def target_callback(self, msg: Float32):
         self.target_position = float(msg.data)
         self.get_logger().info(f'[Patient] Received target: {self.target_position:.2f}°')
 
-    def mode_callback(self, msg: String):
-        new_mode = msg.data.strip()
-        if new_mode != self.mode:
-            self.get_logger().warn(f'[Patient] mode: {self.mode} -> {new_mode}')
-            self.mode = new_mode
-            # Reset FSM entry time so timers start fresh on mode changes
-            self.state_enter_time = None
+    # ---------- Main loop ----------
 
-    def freeze_callback(self, msg: Bool):
-        self.freeze = bool(msg.data)
-        self.get_logger().info(f'[Patient] freeze={self.freeze}')
-
-    # ------------------- FSM Helpers -------------------
-    def _enter_state(self, st: SafeState):
-        # idempotent entry
-        if self.safe_state == st:
+    def update_tick(self):
+        # CHANGED: Do nothing until we have at least one real joint measurement from driver
+        if not self.have_joint_measurement:
             return
-        self.safe_state = st
-        self.state_enter_time = self.get_clock().now()
-        self.get_logger().warn(f'[SafeMode] -> {st.name}')
-        # freeze velocity on HOLD to prevent drift
-        if st == SafeState.HOLD_SAFE:
-            self.velocity = 0.0
 
-    def _time_in_state(self) -> float:
-        if self.state_enter_time is None:
-            return 0.0
-        return (self.get_clock().now() - self.state_enter_time).nanoseconds / 1e9
-
-    # ------------------- Main control loop -------------------
-    def update_position(self):
-        # Decide whether we’re in safe mode or normal mode
-        if self.mode == 'normal' and not self.freeze:
-            # Leave safe FSM if active
-            if self.safe_state != SafeState.IDLE:
-                self._enter_state(SafeState.IDLE)
-
-            # ----- NORMAL ADAPTIVE CONTROL -----
-            error = abs(self.target_position - self.current_position)
-            # adapt stiffness
-            if error > self.high_error_threshold:
-                self.spring_k = min(self.spring_k + self.k_step, self.k_max)
-                self.get_logger().info(f'[Adaptive] 🔺 High error → Increasing stiffness: k = {self.spring_k:.3f}')
-            elif error < self.low_error_threshold:
-                self.spring_k = max(self.spring_k - self.k_step, self.k_min)
-                self.get_logger().info(f'[Adaptive] 🔻 Low error → Decreasing stiffness: k = {self.spring_k:.3f}')
-
-            # spring-damper control toward target
-            k = self.spring_k
-            c = self.damping_c
-            eff_target = self.target_position
-            vmax_s = None  # deg/s; no clamp in normal mode
-
+        if self.mode == "NORMAL":
+            self._step_normal_controller()       # CHANGED: controller-only, updates command_deg
+        elif self.mode == "FREEZE":
+            self._step_freeze_controller()       # CHANGED: controller-only, holds freeze_origin_deg
+        elif self.mode in ("SLEEP", "ZERO_POSITION"):
+            self._step_sleep_like_controller()   # controller-only, moves command_deg → 0
         else:
-            # ----- SAFE FSM -----
-            k, c, eff_target, vmax_s = self._tick_safe_mode()  # vmax_s is in deg/s
+            self._step_freeze_controller()
 
-        # ---- begin: logging locals (matches what controller uses) ----
-        k_used = k
-        c_used = c
-        eff_tgt = eff_target
-        vmax_s_used = vmax_s if vmax_s is not None else -1.0
-        err_to_doctor = abs(self.target_position - self.current_position)
-        err_to_eff    = abs(eff_tgt - self.current_position)
-        # ---- end: logging locals ----
+        # CHANGED: Soft clamp is now applied to COMMAND (what we ask the motor to do),
+        #          not to the simulated current_position.
+        if self.mode != "NORMAL":
+            self.command_deg = self._cap(self.command_deg, self.angle_min_deg, self.angle_max_deg)
 
-        # ------------- Integrate dynamics -------------
-        spring_force  = -k * (self.current_position - eff_target)
-        damping_force = -c * self.velocity
-        total_force   = spring_force + damping_force
+        # ---- measured velocity (deg/s) for stability checks ----
+        # CHANGED: derived from measured joint position instead of internal simulation.
+        self.vel_meas_deg_s = (self.current_position - self.prev_position) / self.dt
+        self.prev_position = self.current_position
 
-        # (Simple discrete integration; dt already in timer)
-        self.velocity += total_force
+        # CHANGED: Publish COMMAND position instead of simulated joint position.
+        self.pub_command.publish(Float32(data=float(self.command_deg)))
 
-        # clamp velocity if requested (safe modes)
-        if vmax_s is not None:
-            vcap_tick = vmax_s * self.dt  # convert deg/s → deg/tick
-            if self.velocity > vcap_tick:  self.velocity = vcap_tick
-            if self.velocity < -vcap_tick: self.velocity = -vcap_tick
+        # Report-backs (same logic, using measured position/velocity)
+        self._update_freeze_status()
+        self._update_zero_status()
 
-        self.current_position += self.velocity
-
-        # ------------- Publish & Log -------------
-        out = Float32(); out.data = float(self.current_position)
-        self.pub_joint.publish(out)
-
+        # CSV log (unchanged structure: target vs CURRENT MEASURED joint angle)
         now = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        try:
+            with open(self.log_path, "a") as log_file:
+                log_file.write(f"{now},{self.target_position:.2f},{self.current_position:.2f}\n")
+        except Exception:
+            pass
 
-        # richer adaptive log
-        with open(self.log_path, "a") as f:
-            f.write(f"{now},{self.target_position:.2f},{eff_tgt:.2f},{self.current_position:.2f},"
-                    f"{self.mode},{self.safe_state.name},{k_used:.3f},{c_used:.3f},{vmax_s_used:.2f},"
-                    f"{err_to_doctor:.2f},{err_to_eff:.2f}\n")
+    # ------ Mode implementations (controller form) -------Insert here your controller logic for normal operation and do not run detectors for pure logic testing
 
-        # keep stiffness log with clearer context
-        with open(self.k_log_path, "a") as f:
-            f.write(f"{now},{err_to_doctor:.2f},{err_to_eff:.2f},{k_used:.3f}\n")
+    def _step_normal_controller(self):
+        """CHANGED: NORMAL as a pure controller (no internal plant integration)."""
+        # Error in deg based on measured joint position
+        error_signed = self.target_position - self.current_position
+        error = abs(error_signed)
 
-        # Progression checks inside safe modes (done after integration)
-        if self.safe_state == SafeState.SOFT_RETURN:
-            if abs(self.current_position - self.neutral_deg) <= self.soft_done_eps:
-                self.get_logger().info('[SafeMode] SOFT_RETURN complete → parked near neutral')
+        # Adaptive stiffness (unchanged logic)
+        if error > self.high_error_threshold:
+            self.spring_k = min(self.spring_k + self.k_step, self.k_max)
+            self.get_logger().info(
+                f'[Adaptive] 🔺 High error → Increasing stiffness: k = {self.spring_k:.3f}'
+            )
+        elif error < self.low_error_threshold:
+            self.spring_k = max(self.spring_k - self.k_step, self.k_min)
+            self.get_logger().info(
+                f'[Adaptive] 🔻 Low error → Decreasing stiffness: k = {self.spring_k:.3f}'
+            )
 
-    # ------------------- Safe FSM core -------------------
-    def _tick_safe_mode(self):
-        """
-        Returns (k, c, eff_target, vmax_s) where vmax_s is in deg/s
-        """
-        # Enter HOLD_SAFE if we just got here
-        if self.safe_state == SafeState.IDLE:
-            self._enter_state(SafeState.HOLD_SAFE)
+        # Log k adaptation 
+        now = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        try:
+            with open(self.k_log_path, "a") as k_log_file:
+                k_log_file.write(f"{now},{error:.2f},{self.spring_k:.3f}\n")
+        except Exception:
+            pass
 
-        # HOLD_SAFE: freeze at last pose with higher damping, keep current k small
-        if self.safe_state == SafeState.HOLD_SAFE:
-            if self.state_enter_time is None:
-                self.state_enter_time = self.get_clock().now()
+        # Virtual spring–damper toward target (deg space), applied to COMMAND dynamics
+        spring_term = -self.spring_k * (self.current_position - self.target_position)
+        damping_term = -self.damping_c * self.velocity   # CHANGED: velocity is internal command velocity
+        total = spring_term + damping_term
 
-            # Increase damping, soften spring a bit
-            c = max(self.damping_c, self.hold_d)
-            k = min(self.spring_k, 0.05)  # soften grip
-            eff_target = self.current_position  # hold here
-            vmax_s = 0.0  # deg/s: no motion (pure hold)
+        # integrate internal command velocity & command position (same discrete form as original)
+        self.velocity += total      # internal "command acceleration"
+        self.command_deg += self.velocity  # new command angle
 
-            # After timeout, decide next
-            dt = self._time_in_state()
-            # ADVANCE after the delay for BOTH passive (L2) and estop (L3)
-            if dt >= self.t_release_s:
-                dist = abs(self.current_position - self.neutral_deg)
-                if dist <= self.safe_zone_deg:
-                    self._enter_state(SafeState.SOFT_RETURN)
-                elif dist <= self.creep_allow_window_deg:
-                    self._enter_state(SafeState.CREEP_TO_SAFE)
-                # else stay in HOLD if way outside
-            return k, c, eff_target, vmax_s
+        # Console log (shows measured position)
+        self.get_logger().info(
+            f'[Patient] 📐 Meas Pos: {self.current_position:.2f}° | Cmd: {self.command_deg:.2f}° | '
+            f'Target: {self.target_position:.2f}° | Error: {error:.2f}°'
+        )
 
-        # CREEP_TO_SAFE: tiny bias toward neutral with strict low vmax
-        if self.safe_state == SafeState.CREEP_TO_SAFE:
-            c = max(self.damping_c, self.hold_d)
-            k = min(self.spring_k, self.creep_k)
-            eff_target = self.neutral_deg
-            vmax_s = self.creep_vmax_deg_s      # deg/s
-            # Transition to SOFT_RETURN once inside safe zone
-            if abs(self.current_position - self.neutral_deg) <= self.safe_zone_deg:
-                self._enter_state(SafeState.SOFT_RETURN)
-            return k, c, eff_target, vmax_s
+        #Safety motion modes defined here
 
-        # SOFT_RETURN: stronger but still gentle return to neutral
-        if self.safe_state == SafeState.SOFT_RETURN:
-            c = max(self.damping_c, self.hold_d)
-            k = max(self.spring_k, self.soft_k)
-            eff_target = self.neutral_deg
-            vmax_s = self.soft_vmax_deg_s       # deg/s
-            return k, c, eff_target, vmax_s
+    def _step_freeze_controller(self):
+        """CHANGED: FREEZE as controller — hold around freeze_origin_deg."""
+        # CHANGED: simply command the freeze_origin_deg and kill internal velocity.
+        self.command_deg = self.freeze_origin_deg
+        self.velocity = 0.0
 
-        # Fallback (shouldn’t happen)
-        return self.spring_k, self.damping_c, self.target_position, None
+    def _step_sleep_like_controller(self):
+        """CHANGED: Return to 0° using SOFT or CREEP, via command trajectory only."""
+        # CHANGED: decide SOFT/CREEP based on measured angle
+        abs_ang = abs(self.current_position)
+        if abs_ang >= self.creep_threshold_deg:
+            vmax = self.vmax_creep_deg_s
+            amax = self.amax_creep_deg_s2
+        else:
+            vmax = self.vmax_soft_deg_s
+            amax = self.amax_soft_deg_s2
+
+        goal = 0.0
+
+        # Trapezoidal profile on the COMMAND setpoint (same idea as original)
+        cmd_err = goal - self.command_deg
+        v_des = self._cap(cmd_err / max(self.dt, 1e-6), -vmax, vmax)
+        dv_max = amax * self.dt
+        v_next = self._cap(
+            v_des,
+            self.command_vel_deg_s - dv_max,
+            self.command_vel_deg_s + dv_max
+        )
+        self.command_vel_deg_s = v_next
+        self.command_deg += self.command_vel_deg_s * self.dt
+
+        # Prevent tiny overshoot around zero
+        if (goal - self.command_deg) * self.command_vel_deg_s < 0.0:
+            self.command_deg = goal
+            self.command_vel_deg_s = 0.0
+
+        # CHANGED: removed extra spring–damper integration on command_deg here.
+        # The Dynamixel's internal  controller will track command_deg; we only need the trajectory.
+
+    # ---------- Report-back helpers ----------
+
+    def _update_freeze_status(self):
+        if self.mode != "FREEZE":
+            if self._freeze_stable_latch:
+                self._freeze_stable_latch = False
+                self._publish_bool(self.pub_freeze_stable, False)
+            self._freeze_hold_elapsed = 0.0
+            return
+
+        # Use measured velocity in deg/s (consistent across modes)
+        if abs(self.vel_meas_deg_s) < self.vel_stable_deg_s:
+            self._freeze_hold_elapsed += self.dt
+        else:
+            self._freeze_hold_elapsed = 0.0
+
+        if (not self._freeze_stable_latch) and (self._freeze_hold_elapsed >= self.hold_time_s):
+            self._freeze_stable_latch = True
+            self._publish_bool(self.pub_freeze_stable, True)
+            self.pub_freeze_done.publish(Empty())
+
+    def _update_zero_status(self):
+        # Use measured velocity in deg/s (consistent across modes)
+        at_zero_now = (
+            abs(self.current_position) <= self.zero_tol_deg
+        ) and (
+            abs(self.vel_meas_deg_s) < self.vel_stable_deg_s
+        )
+
+        if self.mode in ("SLEEP", "ZERO_POSITION"):
+            if at_zero_now:
+                self._at_zero_hold_elapsed += self.dt
+            else:
+                self._at_zero_hold_elapsed = 0.0
+
+            if (not self._at_zero_latch) and (self._at_zero_hold_elapsed >= self.hold_time_s):
+                self._at_zero_latch = True
+                self._publish_bool(self.pub_at_zero, True)
+                self.pub_zero_reached.publish(Empty())
+                # Auto transition to FREEZE for safe handoff
+                self.mode_callback(String(data="FREEZE"))
+        else:
+            if self._at_zero_latch != at_zero_now:
+                self._at_zero_latch = at_zero_now
+                self._publish_bool(self.pub_at_zero, at_zero_now)
+            self._at_zero_hold_elapsed = 0.0
+
+    # ---------- Utils ----------
+
+    @staticmethod
+    def _cap(x, lo, hi):
+        return lo if x < lo else hi if x > hi else x
+
+    def _publish_bool(self, pub, value: bool):
+        pub.publish(Bool(data=bool(value)))
 
 
 def main(args=None):
@@ -252,15 +424,9 @@ def main(args=None):
     except KeyboardInterrupt:
         pass
     finally:
-        try:
-            node.destroy_node()
-        except Exception:
-            pass
-        try:
-            if rclpy.ok():
-                rclpy.shutdown()
-        except Exception:
-            pass
+        node.destroy_node()
+        if rclpy.ok():
+            rclpy.shutdown()
 
 
 if __name__ == "__main__":

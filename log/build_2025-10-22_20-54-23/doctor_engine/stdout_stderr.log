@@ -1,0 +1,23 @@
+running develop
+running egg_info
+creating doctor_engine.egg-info
+writing doctor_engine.egg-info/PKG-INFO
+writing dependency_links to doctor_engine.egg-info/dependency_links.txt
+writing entry points to doctor_engine.egg-info/entry_points.txt
+writing requirements to doctor_engine.egg-info/requires.txt
+writing top-level names to doctor_engine.egg-info/top_level.txt
+writing manifest file 'doctor_engine.egg-info/SOURCES.txt'
+reading manifest file 'doctor_engine.egg-info/SOURCES.txt'
+writing manifest file 'doctor_engine.egg-info/SOURCES.txt'
+running build_ext
+Creating /home/anas/ros2_ws/install/lib/python3.12/site-packages/doctor-engine.egg-link (link to .)
+Installing doctor_mqtt_bridge script to /home/anas/ros2_ws/install/lib/doctor_engine
+Installing doctor_node script to /home/anas/ros2_ws/install/lib/doctor_engine
+
+Installed /home/anas/ros2_ws/build/doctor_engine
+running symlink_data
+creating /home/anas/ros2_ws/install/share/ament_index
+creating /home/anas/ros2_ws/install/share/ament_index/resource_index
+creating /home/anas/ros2_ws/install/share/ament_index/resource_index/packages
+symbolically linking /home/anas/ros2_ws/build/doctor_engine/resource/doctor_engine -> /home/anas/ros2_ws/install/share/ament_index/resource_index/packages
+symbolically linking /home/anas/ros2_ws/build/doctor_engine/package.xml -> /home/anas/ros2_ws/install/share/doctor_engine

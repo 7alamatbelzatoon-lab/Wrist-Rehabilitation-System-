@@ -1,215 +1,142 @@
 #!/usr/bin/env python3
+import os, json, time
 import rclpy
 from rclpy.node import Node
-from std_msgs.msg import Float32, Bool
+from std_msgs.msg import Float32
 import paho.mqtt.client as mqtt
-import json, time
+from rclpy.qos import QoSProfile, HistoryPolicy, ReliabilityPolicy, DurabilityPolicy
+from builtin_interfaces.msg import Duration
 
+MQTT_TOPIC_TARGET   = "rehab/target_position"   # doctor -> patient (JSON)
+MQTT_TOPIC_JOINT    = "rehab/joint_position"    # patient -> doctor (float str)
+MQTT_TOPIC_PING     = "rehab/ping"              # doctor -> patient (JSON)
+MQTT_TOPIC_PONG     = "rehab/pong"              # patient -> doctor (JSON echo)
+MQTT_TOPIC_LAT_MS   = "rehab/latency_ms"        # doctor -> patient (float str mirror)
 
-class PatientMQTTBridge(Node):
+qos_sensorData = QoSProfile(
+    history=HistoryPolicy.KEEP_LAST, depth=10,
+    reliability=ReliabilityPolicy.RELIABLE,
+    durability=DurabilityPolicy.VOLATILE,     # no latching for commands
+)
+
+class DoctorMQTTBridge(Node):
     """
-    Patient side bridge:
-      MQTT → ROS:
-        rehab/target_position  -> /patient/target_position
-        rehab/safety/net_*     -> /network/warning, /safety/network_fault, /safety/network_estop
-        rehab/doctor_alive     -> reconnection awareness
-        rehab/safety/clear_estop -> authorize clearing when healthy
+    Clean, dumb bridge:
       ROS → MQTT:
-        /patient/joint_position -> rehab/joint_position
-
-      RTT helper:
-        - listens to rehab/ping and echoes rehab/pong (doctor computes RTT)
-
-      Local safety:
-        - watchdog: if no 'rehab/ping' seen for > thresholds, publish local L2/L3
+        /doctor/target_position  -> rehab/target_position  (JSON, QoS1, retain=False)
+        RTT mirror               -> rehab/latency_ms       (float str, QoS1, retain=False)
+      MQTT → ROS:
+        rehab/joint_position     -> /doctor/haptic_ref     (Float32)
+      RTT:
+        send rehab/ping, expect rehab/pong, compute RTT → /doctor_network/latency_ms
     """
 
     def __init__(self):
-        super().__init__('patient_mqtt_bridge')
+        super().__init__('doctor_mqtt_bridge')
 
         # ROS wiring
-        self.pub_target = self.create_publisher(Float32, '/patient/target_position', 10)
-        self.sub_joint  = self.create_subscription(Float32, '/patient/joint_position',
-                                                   self.ros_joint_to_mqtt, 10)
+        self.sub_target  = self.create_subscription(Float32, '/doctor/target_position', self._ros_target_to_mqtt, qos_sensorData)
 
-        self.pub_warning   = self.create_publisher(Bool, '/network/warning', 10)
-        self.pub_net_fault = self.create_publisher(Bool, '/safety/network_fault', 10)
-        self.pub_net_estop = self.create_publisher(Bool, '/safety/network_estop', 10)
+        # this variable we use for GUI doictor to display current patient angle recieved no subscribers yet!
+        self.pub_haptic  = self.create_publisher(Float32, '/doctor/haptic_ref', qos_sensorData) 
 
-        # Local watchdog / health
-        self.last_ping_ns       = time.monotonic_ns()
-        self.no_ping_fault_s    = 1.5
-        self.no_ping_estop_s    = 3.0
-        self.good_required_s    = 2.0
-        self.health_ok_since_ns = self.last_ping_ns
+        # what we will use for network anomaly detection on doctor side                     
+        self.pub_lat_doc = self.create_publisher(Float32, '/doctor_network/latency_ms', qos_sensorData)
 
-        self.debounce_needed = 2
-        self.debounce_fault = 0
-        self.debounce_estop = 0
-        self.debounce_ok    = 0
+        # MQTT config (TLS; env overrides)
+        host   = os.getenv("MQTT_HOST", "bea7b081570a4e03a77248e8b07072d9.s1.eu.hivemq.cloud")
+        port   = int(os.getenv("MQTT_PORT", "8883"))
+        user   = os.getenv("MQTT_USER", "doctor")
+        passwd = os.getenv("MQTT_PASS", "Doctor123")
+        client_id = os.getenv("MQTT_CLIENT_ID", f"doctor-bridge-{int(time.time())}")
 
-        self.l1_warning = False
-        self.l2_fault   = False
-        self.l3_estop   = False
-
-        self.doctor_alive = False
-
-        self.create_timer(0.25, self.local_watchdog_tick)
-
-        # HiveMQ (hard-coded)
-        host   = "bea7b081570a4e03a77248e8b07072d9.s1.eu.hivemq.cloud"
-        port   = 8883
-        user   = "doctor"
-        passwd = "Doctor123"
-
-        self.mqtt = mqtt.Client()
+        self.mqtt = mqtt.Client(client_id=client_id, clean_session=True)
         self.mqtt.username_pw_set(user, passwd)
         self.mqtt.tls_set()
-        self.mqtt.on_connect = self.on_connect
-        self.mqtt.on_message = self.on_mqtt_message
+        self.mqtt.on_connect = self._on_connect
+        self.mqtt.on_message = self._on_mqtt_msg
         self.mqtt.connect(host, port, keepalive=60)
         self.mqtt.loop_start()
-        self.get_logger().info(f"[PatientMQTTBridge] Connected securely to HiveMQ Cloud {host}:{port}")
+        self.get_logger().info(f"[DoctorMQTTBridge] MQTT TLS connected {host}:{port} as {client_id}")
+
+        # RTT state
+        self.ping_id     = 0
+        self.outstanding = {}  # id -> t0_ns
+        self.max_outstanding_ids = 5  # keep only the most recent 5 pings * memory opitimization *
+        self.create_timer(1.0, self._send_ping)
 
     # ROS → MQTT
-    def ros_joint_to_mqtt(self, msg: Float32):
-        try:
-            val = float(msg.data)
-        except Exception:
-            return
-        self.mqtt.publish("rehab/joint_position", str(val))
-        self.get_logger().info(f"[PatientMQTTBridge] Sent joint: {val:.2f}°")
+    def _ros_target_to_mqtt(self, msg: Float32):
+        payload = json.dumps({"deg": float(msg.data), "t0_ns": time.monotonic_ns()})
+        # CHANGED: retain=False for fresh-only commands (no stale replay)
+        self.mqtt.publish(MQTT_TOPIC_TARGET, payload, qos=1, retain=False)
+        self.get_logger().debug(f"[DoctorMQTTBridge] target→MQTT q1,no-retain: {msg.data:.2f}°")
 
-    # MQTT subscriptions
-    def on_connect(self, client, userdata, flags, rc):
-        self.get_logger().info(f"[PatientMQTTBridge] MQTT connected rc={rc}")
-        client.subscribe("rehab/target_position")
-        client.subscribe("rehab/ping")
-        client.subscribe("rehab/safety/net_warning")
-        client.subscribe("rehab/safety/net_fault")
-        client.subscribe("rehab/safety/net_estop")
-        client.subscribe("rehab/doctor_alive")
-        client.subscribe("rehab/safety/clear_estop")
+    # MQTT callbacks
+    def _on_connect(self, client, userdata, flags, rc):
+        self.get_logger().info(f"[DoctorMQTTBridge] MQTT connected rc={rc}")
+        client.subscribe(MQTT_TOPIC_JOINT, qos=0)
+        client.subscribe(MQTT_TOPIC_PONG,  qos=1)
 
-    # MQTT → ROS
-    def on_mqtt_message(self, client, userdata, msg):
-        topic = msg.topic
-        payload = msg.payload.decode().strip()
-
-        if topic == "rehab/target_position":
+    def _on_mqtt_msg(self, client, userdata, msg):
+        if msg.topic == MQTT_TOPIC_JOINT:
             try:
-                value = float(payload)
-                out = Float32(); out.data = value
-                self.pub_target.publish(out)
-                self.get_logger().info(f"[PatientMQTTBridge] Received target: {value:.2f}°")
+                v = float(msg.payload.decode())
+                self.pub_haptic.publish(Float32(data=v))
+                self.get_logger().debug(f"[DoctorMQTTBridge] haptic_ref: {v:.2f}°")
             except ValueError:
-                self.get_logger().warn("[PatientMQTTBridge] Invalid target payload")
-
-        elif topic == "rehab/ping":
+                self.get_logger().warning("[DoctorMQTTBridge] invalid rehab/joint_position payload")
+        elif msg.topic == MQTT_TOPIC_PONG:
             try:
-                data = json.loads(payload)
-                now = time.monotonic_ns()
-                self.last_ping_ns = now
-                self.health_ok_since_ns = now
-                self.mqtt.publish("rehab/pong", json.dumps(data))
+                data = json.loads(msg.payload.decode())
+                pid = int(data.get("id", -1)); t0 = int(data.get("t0", 0))
             except Exception:
-                pass
+                return
+            tnow = time.monotonic_ns()
+            t0_sent = self.outstanding.pop(pid, None)
+            if t0_sent is None or t0_sent != t0:
+                return
+            rtt_ms = (tnow - t0) / 1e6
+            self.pub_lat_doc.publish(Float32(data=float(rtt_ms)))
+            # mirror to MQTT so patient can also display/republish it
+            self.mqtt.publish(MQTT_TOPIC_LAT_MS, f"{rtt_ms:.3f}", qos=1, retain=False)
+            self.get_logger().debug(f"[DoctorMQTTBridge] RTT={rtt_ms:.2f} ms")
 
-        elif topic == "rehab/doctor_alive":
-            self.doctor_alive = (payload == "1" or payload.lower() == "true")
-            self.get_logger().info(f"[PatientMQTTBridge] doctor_alive={self.doctor_alive}")
 
-        elif topic == "rehab/safety/clear_estop":
-            # Only honor when locally healthy and doctor is alive
-            now = time.monotonic_ns()
-            healthy_s = (now - self.health_ok_since_ns) / 1e9
-            if healthy_s >= self.good_required_s and self.doctor_alive:
-                self._set_states(False, False, False, note="CLEAR via doctor handshake")
-            else:
-                self.get_logger().info("[PatientMQTTBridge] Ignored clear_estop (not healthy/doctor not alive)")
-
-        elif topic == "rehab/safety/net_warning":
-            is_on = (payload == "1" or payload.lower() == "true")
-            self._set_states(warning=is_on, fault=self.l2_fault, estop=self.l3_estop, note=f"net_warning={is_on}")
-
-        elif topic == "rehab/safety/net_fault":
-            is_on = (payload == "1" or payload.lower() == "true")
-            # fault suppresses warning
-            self._set_states(warning=False if is_on else self.l1_warning, fault=is_on, estop=self.l3_estop,
-                             note=f"net_fault={is_on}")
-
-        elif topic == "rehab/safety/net_estop":
-            is_on = (payload == "1" or payload.lower() == "true")
-            if is_on:
-                self._set_states(False, False, True, note="net_estop=1")
-            else:
-                # allow a clear via mirrored flag too, if locally healthy + doctor alive
-                now = time.monotonic_ns()
-                healthy_s = (now - self.health_ok_since_ns) / 1e9
-                if healthy_s >= self.good_required_s and self.doctor_alive:
-                    self._set_states(False, False, False, note="CLEAR via net_estop=0")
-                else:
-                    self.get_logger().info("[PatientMQTTBridge] net_estop=0 seen (not healthy yet)")
-
-    # ---- Local watchdog (backup)
-    def local_watchdog_tick(self):
-        now = time.monotonic_ns()
-        age_s = (now - self.last_ping_ns) / 1e9
-
-        want_estop = age_s > self.no_ping_estop_s
-        want_fault = (age_s > self.no_ping_fault_s) and not want_estop
-
-        if want_estop:
-            self.debounce_estop += 1; self.debounce_fault = 0; self.debounce_ok = 0
-        elif want_fault:
-            self.debounce_fault += 1; self.debounce_estop = 0; self.debounce_ok = 0
-        else:
-            self.debounce_ok += 1; self.debounce_fault = 0; self.debounce_estop = 0
-
-        raise_estop = (self.debounce_estop >= self.debounce_needed)
-        raise_fault = (self.debounce_fault >= self.debounce_needed)
-
-        if raise_estop and not self.l3_estop:
-            self._set_states(False, False, True, note=f"LOCAL ESTOP (no ping {age_s:.2f}s)")
+    #  this method is to clear memory
+    def _prune_outstanding(self):
+        """Keep only the most recent N ping ids to avoid unbounded growth if pongs are missed."""
+    # Fast path: nothing to prune
+        if len(self.outstanding) <= self.max_outstanding_ids:
             return
-        if raise_fault and not self.l2_fault and not self.l3_estop:
-            self._set_states(False, True, False, note=f"LOCAL FAULT (no ping {age_s:.2f}s)")
-            return
+    # Remove oldest ids, keep the newest N
+    # ids are monotonically increasing; sorting is fine at this tiny size
+        keep_from = sorted(self.outstanding.keys())[-self.max_outstanding_ids:]
+        keep_set = set(keep_from)
+    # Rebuild dict with only the ids we keep (avoids mutating while iterating)
+        self.outstanding = {k: self.outstanding[k] for k in keep_from}
 
-        if not want_fault and not want_estop:
-            healthy_s = (now - self.health_ok_since_ns) / 1e9
-            if healthy_s >= self.good_required_s:
-                if self.l3_estop or self.l2_fault or self.l1_warning:
-                    self._set_states(False, False, False, note="LOCAL CLEAR (healthy)")
-
-    def _set_states(self, warning: bool, fault: bool, estop: bool, note: str = ""):
-        # Priority: L3 > L2 > L1
-        if estop:
-            warning = False; fault = False
-        elif fault:
-            warning = False
-
-        changed = (warning != self.l1_warning) or (fault != self.l2_fault) or (estop != self.l3_estop)
-        self.l1_warning, self.l2_fault, self.l3_estop = warning, fault, estop
-
-        if changed:
-            b = Bool()
-            b.data = self.l1_warning; self.pub_warning.publish(b)
-            b.data = self.l2_fault;   self.pub_net_fault.publish(b)
-            b.data = self.l3_estop;   self.pub_net_estop.publish(b)
-            if note:
-                self.get_logger().warn(f"[PatientMQTTBridge] {note}")
-            self.get_logger().info(f"[PatientMQTTBridge] L1={self.l1_warning} L2={self.l2_fault} L3={self.l3_estop}")
-
+    # Ping (1 Hz)
+    def _send_ping(self):
+        self.ping_id += 1
+        t0 = time.monotonic_ns()
+        self.outstanding[self.ping_id] = t0
+        self._prune_outstanding()
+        self.mqtt.publish(MQTT_TOPIC_PING, json.dumps({"id": self.ping_id, "t0": t0}), qos=1, retain=False)
 
 def main(args=None):
     rclpy.init(args=args)
-    node = PatientMQTTBridge()
+    node = DoctorMQTTBridge()
     try:
         rclpy.spin(node)
     except KeyboardInterrupt:
-        node.get_logger().info("Shutting down (Ctrl+C)")
+        pass
     finally:
+        node.mqtt.loop_stop()
+        node.mqtt.disconnect()
         node.destroy_node()
         if rclpy.ok():
             rclpy.shutdown()
+
+if __name__ == "__main__":
+    main()

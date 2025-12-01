@@ -1,0 +1,5 @@
+  File "/home/anas/ros2_ws/install/doctor_engine/lib/python3.12/site-packages/doctor_engine/nodes/doctor_node.py", line 24
+    0.0, 5.0, 10.0, 15.0, 20.0, 25.0, 30.0, 35.0, 40.0, 45.0, 50.0, 55.0, 60.0, 65.0, 67.0, 67.0 67.0, 64.0, 60.0, 55.0, 50.0, 45.0, 40.0, 35.0, 
+                                                                                            ^^^^^^^^^
+SyntaxError: invalid syntax. Perhaps you forgot a comma?
+

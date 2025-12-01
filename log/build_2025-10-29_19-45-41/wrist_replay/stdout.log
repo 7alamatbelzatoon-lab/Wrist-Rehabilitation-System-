@@ -1,0 +1,19 @@
+running egg_info
+writing ../../build/wrist_replay/wrist_replay.egg-info/PKG-INFO
+writing dependency_links to ../../build/wrist_replay/wrist_replay.egg-info/dependency_links.txt
+writing entry points to ../../build/wrist_replay/wrist_replay.egg-info/entry_points.txt
+writing requirements to ../../build/wrist_replay/wrist_replay.egg-info/requires.txt
+writing top-level names to ../../build/wrist_replay/wrist_replay.egg-info/top_level.txt
+reading manifest file '../../build/wrist_replay/wrist_replay.egg-info/SOURCES.txt'
+writing manifest file '../../build/wrist_replay/wrist_replay.egg-info/SOURCES.txt'
+running build
+running build_py
+running install
+running install_lib
+running install_data
+running install_egg_info
+removing '/home/anas/ros2_ws/install/wrist_replay/lib/python3.12/site-packages/wrist_replay-0.0.1-py3.12.egg-info' (and everything under it)
+Copying ../../build/wrist_replay/wrist_replay.egg-info to /home/anas/ros2_ws/install/wrist_replay/lib/python3.12/site-packages/wrist_replay-0.0.1-py3.12.egg-info
+running install_scripts
+Installing replay_node script to /home/anas/ros2_ws/install/wrist_replay/lib/wrist_replay
+writing list of installed files to '/home/anas/ros2_ws/build/wrist_replay/install.log'

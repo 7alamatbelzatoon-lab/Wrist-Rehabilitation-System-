@@ -59,7 +59,7 @@ class PatientNode(Node):
     def __init__(self):
         super().__init__("patient_node")
 
-        # Subscriptions (one publisher elsewhere)
+        # Subscriptions 
         self.sub_target = self.create_subscription(
             Float32,
             '/patient/target_position',
@@ -76,7 +76,7 @@ class PatientNode(Node):
         # CHANGED: New subscription for measured joint position from hardware driver
         self.sub_joint_meas = self.create_subscription(
             Float32,
-            '/patient/joint_position',           # same topic name, but now we LISTEN instead of publish
+            '/patient/joint_position',           # same topic name, but now we LISTEN instead of publish for HIL
             self.joint_meas_callback,
             qos_sensorData
         )
@@ -86,7 +86,7 @@ class PatientNode(Node):
         #          Instead we publish /patient/command_position (controller output).
         self.pub_command = self.create_publisher(
             Float32,
-            '/patient/command_position',         # NEW: command position for the motor driver
+            '/patient/command_position',         # NEW: command position for the motor driver HIL
             qos_sensorData
         )
         self.pub_freeze_done = self.create_publisher(
@@ -139,6 +139,7 @@ class PatientNode(Node):
         # CHANGED: FREEZE hold point (where to stop)
         self.freeze_origin_deg = 0.0   # NEW: remembers position at entry to FREEZE
 
+        #Swappable Controller logic
         # === Adaptive stiffness (UNCHANGED) ===
         self.spring_k = 0.225
         self.damping_c = 0.4  # baseline damping (NORMAL)
@@ -172,12 +173,12 @@ class PatientNode(Node):
         self._freeze_stable_latch = False
         self._at_zero_latch = False
 
-        # CSV logs (unchanged)
-        self.log_path = os.path.expanduser('~/ros2_ws/adaptive_log.csv')
+        # CSV logs 
+        self.log_path = os.path.expanduser('~/ros2_ws/adaptive_log.csv')            #Change directory based on your system here
         with open(self.log_path, "w") as log_file:
-            log_file.write("Time,Target,Current\n")
-        self.k_log_path = os.path.expanduser('~/ros2_ws/stiffness_log.csv')
-        with open(self.k_log_path, "w") as k_log_file:
+            log_file.write("Time,Target,Current\n")                                 #Keep this for the 3d replay or change both (in replay node)
+        self.k_log_path = os.path.expanduser('~/ros2_ws/stiffness_log.csv')           
+        with open(self.k_log_path, "w") as k_log_file:                              #Stiffness logs 
             k_log_file.write("Time,Error,Stiffness_k\n")
 
     # ---------- Callbacks ----------
@@ -274,7 +275,7 @@ class PatientNode(Node):
         except Exception:
             pass
 
-    # ---------- Mode implementations (controller form) ----------
+    # ------ Mode implementations (controller form) -------Insert here your controller logic for normal operation and do not run detectors for pure logic testing
 
     def _step_normal_controller(self):
         """CHANGED: NORMAL as a pure controller (no internal plant integration)."""
@@ -294,7 +295,7 @@ class PatientNode(Node):
                 f'[Adaptive] 🔻 Low error → Decreasing stiffness: k = {self.spring_k:.3f}'
             )
 
-        # Log k adaptation (unchanged)
+        # Log k adaptation 
         now = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         try:
             with open(self.k_log_path, "a") as k_log_file:
@@ -307,15 +308,17 @@ class PatientNode(Node):
         damping_term = -self.damping_c * self.velocity   # CHANGED: velocity is internal command velocity
         total = spring_term + damping_term
 
-        # CHANGED: integrate internal command velocity & command position (same discrete form as original)
+        # integrate internal command velocity & command position (same discrete form as original)
         self.velocity += total      # internal "command acceleration"
         self.command_deg += self.velocity  # new command angle
 
-        # Console log (still shows measured position)
+        # Console log (shows measured position)
         self.get_logger().info(
             f'[Patient] 📐 Meas Pos: {self.current_position:.2f}° | Cmd: {self.command_deg:.2f}° | '
             f'Target: {self.target_position:.2f}° | Error: {error:.2f}°'
         )
+
+        #Safety motion modes defined here
 
     def _step_freeze_controller(self):
         """CHANGED: FREEZE as controller — hold around freeze_origin_deg."""
@@ -354,7 +357,7 @@ class PatientNode(Node):
             self.command_vel_deg_s = 0.0
 
         # CHANGED: removed extra spring–damper integration on command_deg here.
-        # The Dynamixel's internal position controller will track command_deg; we only need the trajectory.
+        # The Dynamixel's internal  controller will track command_deg; we only need the trajectory.
 
     # ---------- Report-back helpers ----------
 

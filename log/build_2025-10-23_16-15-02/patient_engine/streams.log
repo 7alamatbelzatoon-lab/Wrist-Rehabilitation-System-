@@ -1,0 +1,30 @@
+[0.727s] Invoking command in '/home/anas/ros2_ws/src/patient_engine': DEBUGINFOD_URLS=https://debuginfod.ubuntu.com PYTHONPATH=/home/anas/ros2_ws/build/patient_engine/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/anas/ros2_ws/install/patient_engine/lib/python3.12/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/patient_engine build --build-base /home/anas/ros2_ws/build/patient_engine/build install --record /home/anas/ros2_ws/build/patient_engine/install.log --single-version-externally-managed install_data
+[0.870s] running egg_info
+[0.892s] writing ../../build/patient_engine/patient_engine.egg-info/PKG-INFO
+[0.892s] writing dependency_links to ../../build/patient_engine/patient_engine.egg-info/dependency_links.txt
+[0.892s] writing entry points to ../../build/patient_engine/patient_engine.egg-info/entry_points.txt
+[0.893s] writing requirements to ../../build/patient_engine/patient_engine.egg-info/requires.txt
+[0.893s] writing top-level names to ../../build/patient_engine/patient_engine.egg-info/top_level.txt
+[0.918s] reading manifest file '../../build/patient_engine/patient_engine.egg-info/SOURCES.txt'
+[0.918s] writing manifest file '../../build/patient_engine/patient_engine.egg-info/SOURCES.txt'
+[0.918s] running build
+[0.918s] running build_py
+[0.918s] copying patient_engine/nodes/detectors/network_detector_scenario_test.py -> /home/anas/ros2_ws/build/patient_engine/build/lib/patient_engine/nodes/detectors
+[0.918s] running install
+[0.923s] running install_lib
+[0.933s] copying /home/anas/ros2_ws/build/patient_engine/build/lib/patient_engine/nodes/detectors/network_detector_scenario_test.py -> /home/anas/ros2_ws/install/patient_engine/lib/python3.12/site-packages/patient_engine/nodes/detectors
+[0.934s] byte-compiling /home/anas/ros2_ws/install/patient_engine/lib/python3.12/site-packages/patient_engine/nodes/detectors/network_detector_scenario_test.py to network_detector_scenario_test.cpython-312.pyc
+[0.936s] running install_data
+[0.936s] running install_egg_info
+[0.948s] removing '/home/anas/ros2_ws/install/patient_engine/lib/python3.12/site-packages/patient_engine-0.1.1-py3.12.egg-info' (and everything under it)
+[0.951s] Copying ../../build/patient_engine/patient_engine.egg-info to /home/anas/ros2_ws/install/patient_engine/lib/python3.12/site-packages/patient_engine-0.1.1-py3.12.egg-info
+[0.951s] running install_scripts
+[1.027s] Installing motion_detector script to /home/anas/ros2_ws/install/patient_engine/lib/patient_engine
+[1.027s] Installing network_detector script to /home/anas/ros2_ws/install/patient_engine/lib/patient_engine
+[1.027s] Installing network_detector_scenario_test script to /home/anas/ros2_ws/install/patient_engine/lib/patient_engine
+[1.027s] Installing patient_mqtt_bridge script to /home/anas/ros2_ws/install/patient_engine/lib/patient_engine
+[1.027s] Installing patient_node script to /home/anas/ros2_ws/install/patient_engine/lib/patient_engine
+[1.027s] Installing patient_orchestrator script to /home/anas/ros2_ws/install/patient_engine/lib/patient_engine
+[1.027s] Installing stack_manager script to /home/anas/ros2_ws/install/patient_engine/lib/patient_engine
+[1.028s] writing list of installed files to '/home/anas/ros2_ws/build/patient_engine/install.log'
+[1.054s] Invoked command in '/home/anas/ros2_ws/src/patient_engine' returned '0': DEBUGINFOD_URLS=https://debuginfod.ubuntu.com PYTHONPATH=/home/anas/ros2_ws/build/patient_engine/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/anas/ros2_ws/install/patient_engine/lib/python3.12/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/patient_engine build --build-base /home/anas/ros2_ws/build/patient_engine/build install --record /home/anas/ros2_ws/build/patient_engine/install.log --single-version-externally-managed install_data

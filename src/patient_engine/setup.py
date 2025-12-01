@@ -44,8 +44,12 @@ setup(
             'stack_manager = patient_engine.nodes.stack_manager_node:main',
             #Network Test
             'network_detector_scenario_test = patient_engine.nodes.detectors.network_detector_scenario_test:main',
-            #Driver
-            'patient_dxl_driver = patient_engine.nodes.drivers.dxl_position_driver:main',
+            #Position control mode driver Driver
+            'dxl_position_driver = patient_engine.nodes.drivers.dxl_position_driver:main',
+            #Current control mode driver Driver
+            'dxl_current_driver = patient_engine.nodes.drivers.dxl_current_driver:main',
+            #Current Control
+            'patient_current_controller = patient_engine.nodes.drivers.patient_current_controller:main',
         ],
     },
 )

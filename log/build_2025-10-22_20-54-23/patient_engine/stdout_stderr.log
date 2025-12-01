@@ -1,0 +1,27 @@
+running develop
+running egg_info
+creating patient_engine.egg-info
+writing patient_engine.egg-info/PKG-INFO
+writing dependency_links to patient_engine.egg-info/dependency_links.txt
+writing entry points to patient_engine.egg-info/entry_points.txt
+writing requirements to patient_engine.egg-info/requires.txt
+writing top-level names to patient_engine.egg-info/top_level.txt
+writing manifest file 'patient_engine.egg-info/SOURCES.txt'
+reading manifest file 'patient_engine.egg-info/SOURCES.txt'
+writing manifest file 'patient_engine.egg-info/SOURCES.txt'
+running build_ext
+Creating /home/anas/ros2_ws/install/lib/python3.12/site-packages/patient-engine.egg-link (link to .)
+Installing motion_detector script to /home/anas/ros2_ws/install/lib/patient_engine
+Installing network_detector script to /home/anas/ros2_ws/install/lib/patient_engine
+Installing patient_mqtt_bridge script to /home/anas/ros2_ws/install/lib/patient_engine
+Installing patient_node script to /home/anas/ros2_ws/install/lib/patient_engine
+Installing patient_orchestrator script to /home/anas/ros2_ws/install/lib/patient_engine
+Installing stack_manager script to /home/anas/ros2_ws/install/lib/patient_engine
+
+Installed /home/anas/ros2_ws/build/patient_engine
+running symlink_data
+symbolically linking /home/anas/ros2_ws/build/patient_engine/resource/patient_engine -> /home/anas/ros2_ws/install/share/ament_index/resource_index/packages
+symbolically linking /home/anas/ros2_ws/build/patient_engine/package.xml -> /home/anas/ros2_ws/install/share/patient_engine
+creating /home/anas/ros2_ws/install/share/patient_engine/config
+symbolically linking /home/anas/ros2_ws/build/patient_engine/config/motion_thresholds_beginner.yaml -> /home/anas/ros2_ws/install/share/patient_engine/config
+symbolically linking /home/anas/ros2_ws/build/patient_engine/config/motion_thresholds_advanced.yaml -> /home/anas/ros2_ws/install/share/patient_engine/config
