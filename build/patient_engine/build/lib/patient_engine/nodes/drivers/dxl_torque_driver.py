@@ -11,36 +11,30 @@ from dynamixel_sdk import (
     COMM_SUCCESS,
 )
 
-# ---------------- DYNAMIXEL X-series control-table constants ----------------
-# Valid for XM540, etc. (Protocol 2.0)
-ADDR_OPERATING_MODE       = 11
-ADDR_TORQUE_ENABLE        = 64
-ADDR_TEMPERATURE_LIMIT    = 31
-ADDR_CURRENT_LIMIT        = 38
-ADDR_MAX_POSITION_LIMIT   = 48
-ADDR_MIN_POSITION_LIMIT   = 52
-ADDR_PROFILE_ACCEL        = 108
-ADDR_PROFILE_VELOCITY     = 112
-ADDR_GOAL_CURRENT         = 102
-ADDR_GOAL_POSITION        = 116
-ADDR_PRESENT_CURRENT      = 126
-ADDR_PRESENT_POSITION     = 132
+# -------- DYNAMIXEL X-series control-table constants (XM540, Protocol 2.0) --------
+ADDR_OPERATING_MODE     = 11
+ADDR_TORQUE_ENABLE      = 64
+ADDR_TEMPERATURE_LIMIT  = 31
+ADDR_CURRENT_LIMIT      = 38
+ADDR_GOAL_CURRENT       = 102
+ADDR_PRESENT_CURRENT    = 126
+ADDR_PRESENT_POSITION   = 132
 
-DXL_MIN_POS_TICK          = 0
-DXL_MAX_POS_TICK          = 4095
+TORQUE_DISABLE          = 0
+TORQUE_ENABLE           = 1
 
-TORQUE_DISABLE            = 0
-TORQUE_ENABLE             = 1
-
-OPERATING_MODE_CURRENT_BASED_POSITION = 5
-PROTOCOL_VERSION          = 2.0
+OPERATING_MODE_CURRENT  = 0      # Pure current control
+PROTOCOL_VERSION        = 2.0
 
 # 0–4095 ticks → 0–360°
-TICKS_PER_REV             = 4096.0
-DEG_PER_TICK              = 360.0 / TICKS_PER_REV
-TICKS_PER_DEG             = TICKS_PER_REV / 360.0
+TICKS_PER_REV           = 4096.0
+DEG_PER_TICK            = 360.0 / TICKS_PER_REV
+TICKS_PER_DEG           = TICKS_PER_REV / 360.0
 
-# QoS similar to patient_node
+DXL_MIN_POS_TICK        = 0
+DXL_MAX_POS_TICK        = 4095
+
+# QoS similar to your other nodes
 qos_sensorData = QoSProfile(
     history=HistoryPolicy.KEEP_LAST,
     depth=10,
@@ -49,74 +43,58 @@ qos_sensorData = QoSProfile(
 )
 
 
-class DynamixelCurrentDriver(Node):
+class DynamixelTorqueDriver(Node):
     """
-    Motor driver for a single Dynamixel X-series joint (XL430 / XM540) in
-    CURRENT-BASED POSITION MODE (5).
+    Dynamixel driver for XM540 in CURRENT CONTROL MODE (0).
 
-    - Subscribes: /patient/goal_current_mA   [Float32, mA]
-    - Publishes:  /patient/joint_position    [Float32, deg]
-
-    From the outside, /patient/joint_position is the same as with 
-    position driver — the difference is only how we drive the motor.
+    - Subscribes:
+        /patient/goal_current_mA  [Float32, mA]   (from PatientCurrentController)
+    - Publishes:
+        /patient/joint_position   [Float32, deg]  (to patient_node, controller, safety)
     """
 
     def __init__(self):
-        super().__init__("dxl_current_driver")
+        super().__init__("dxl_torque_driver")
 
-        # ---------------- Parameters ----------------
+        # -------- Parameters --------
         self.declare_parameter("dxl_id", 1)
         self.declare_parameter("port_name", "/dev/ttyUSB0")
         self.declare_parameter("baudrate", 1_000_000)
         self.declare_parameter("loop_rate_hz", 100.0)
 
-        # Center tick: 2048 → controller 0° corresponds to middle of 0..4095
+        # Center tick for angle mapping (same idea as other drivers)
         self.declare_parameter("center_position_tick", 2048)
 
-        # Default -1 = "do not touch existing profile config"
-        self.declare_parameter("profile_velocity", -1)
-        self.declare_parameter("profile_acceleration", -1)
-
-        # Safety / ROM / current limits (can be tuned via YAML)
-        self.declare_parameter("temp_limit_degC", 80)       # °C
-        self.declare_parameter("current_limit_mA", 1500)    # mA
-        self.declare_parameter("rom_flexion_deg", -83.0)    # min wrist flexion
-        self.declare_parameter("rom_extension_deg", 81.0)   # max wrist extension
+        # Safety limits
+        self.declare_parameter("temp_limit_degC", 80)          # °C
+        self.declare_parameter("current_limit_mA", 1500.0)     # mA (hardware cap)
 
         self.dxl_id = int(self.get_parameter("dxl_id").value)
         self.port_name = str(self.get_parameter("port_name").value)
         self.baudrate = int(self.get_parameter("baudrate").value)
         self.loop_rate_hz = float(self.get_parameter("loop_rate_hz").value)
         self.center_tick = int(self.get_parameter("center_position_tick").value)
-        self.profile_velocity = int(self.get_parameter("profile_velocity").value)
-        self.profile_acceleration = int(self.get_parameter("profile_acceleration").value)
-
         self.temp_limit_degC = int(self.get_parameter("temp_limit_degC").value)
         self.current_limit_mA = float(self.get_parameter("current_limit_mA").value)
-        self.rom_flexion_deg = float(self.get_parameter("rom_flexion_deg").value)
-        self.rom_extension_deg = float(self.get_parameter("rom_extension_deg").value)
-        self.last_goal_position_deg = 0.0
 
         self.get_logger().info(
-            f"Starting Dynamixel CURRENT driver on {self.port_name} "
+            f"Starting Dynamixel TORQUE driver on {self.port_name} "
             f"(ID={self.dxl_id}, baud={self.baudrate})"
         )
 
-        # ---------------- DXL SDK: port + packet handler ----------------
+        # -------- DXL SDK: port + packet handler --------
         self.port_handler = PortHandler(self.port_name)
         self.packet_handler = PacketHandler(PROTOCOL_VERSION)
 
         if not self.port_handler.openPort():
-            self.get_logger().error(
-                " Failed to open serial port. Check U2D2/USB and permissions."
-            )
+            self.get_logger().error(" Failed to open serial port. Check U2D2/USB and permissions.")
             raise RuntimeError("Failed to open Dynamixel port")
 
         if not self.port_handler.setBaudRate(self.baudrate):
             self.get_logger().error(" Failed to set baudrate.")
             raise RuntimeError("Failed to set Dynamixel baudrate")
 
-        # ---------------- Configure motor (Current-based Position Mode, profiles, torque) ----------------
+        # -------- Configure motor (Mode 0, safety, torque) --------
         self._configure_dxl()
 
         # Quick sanity read
@@ -132,16 +110,8 @@ class DynamixelCurrentDriver(Node):
                 f"DXL ID {self.dxl_id} initial position ≈ {present_deg:.2f}°"
             )
 
-        # ---------------- ROS interfaces ----------------
+        # -------- ROS interfaces --------
         self.last_goal_current_mA = 0.0
-
-
-        self.sub_command = self.create_subscription(
-            Float32,
-            "/patient/command_position",
-            self.command_callback,
-            qos_sensorData,
-        )
 
         self.sub_current = self.create_subscription(
             Float32,
@@ -160,65 +130,45 @@ class DynamixelCurrentDriver(Node):
         self.timer = self.create_timer(period, self._update_loop)
 
         self.get_logger().info(
-            " Dynamixel CURRENT driver initialised (Operating Mode 5: current-based position)."
+            " Dynamixel TORQUE driver initialised (Operating Mode 0: current control)."
         )
 
-    # ---------------- DXL configuration ----------------
+    # -------- DXL configuration --------
 
     def _configure_dxl(self):
         """
-        Configure Dynamixel for Current-based Position Mode (5),
-        set current & safety limits, ROM, motion profiles, and enable torque.
+        Configure Dynamixel for Current Control Mode (0),
+        set safety limits, and enable torque.
         """
-        # Torque OFF before changing EEPROM settings
+        # Torque OFF before touching mode & limits
         self._write_1byte(ADDR_TORQUE_ENABLE, TORQUE_DISABLE)
 
-        # 1) Operating mode = Current-based Position (5)
-        self._write_1byte(ADDR_OPERATING_MODE, OPERATING_MODE_CURRENT_BASED_POSITION)
+        # 1) Operating mode = Current (0)
+        self._write_1byte(ADDR_OPERATING_MODE, OPERATING_MODE_CURRENT)
 
         # 2) Safety: temperature limit
         self._write_1byte(ADDR_TEMPERATURE_LIMIT, self.temp_limit_degC)
 
-        # 3) Safety: current limit (mA -> raw ~ [0..2047] for ~[0..5.5A])
+        # 3) Safety: current limit (mA -> raw units)
         raw_current_limit = int(self._mA_to_raw(self.current_limit_mA))
         self._write_2byte(ADDR_CURRENT_LIMIT, raw_current_limit)
 
-        # 4) ROM position limits (based on center tick and flex/extension angles)
-        pulses_per_degree = TICKS_PER_REV / 360.0
-        max_pos_tick = int(self.center_tick + self.rom_extension_deg * pulses_per_degree)
-        min_pos_tick = int(self.center_tick + self.rom_flexion_deg * pulses_per_degree)
-        max_pos_tick = max(DXL_MIN_POS_TICK, min(DXL_MAX_POS_TICK, max_pos_tick))
-        min_pos_tick = max(DXL_MIN_POS_TICK, min(DXL_MAX_POS_TICK, min_pos_tick))
-
-        self._write_4byte(ADDR_MAX_POSITION_LIMIT, max_pos_tick)
-        self._write_4byte(ADDR_MIN_POSITION_LIMIT, min_pos_tick)
-
-        # 5) Motion profiles (optional, like before)
-        if self.profile_acceleration >= 0:
-            self._write_4byte(ADDR_PROFILE_ACCEL, self.profile_acceleration)
-        if self.profile_velocity >= 0:
-            self._write_4byte(ADDR_PROFILE_VELOCITY, self.profile_velocity)
-
-        # 6) Torque ON
+        # 4) Torque ON
         self._write_1byte(ADDR_TORQUE_ENABLE, TORQUE_ENABLE)
 
         self.get_logger().info(
-            f"DXL ID {self.dxl_id}: Mode=CURRENT_BASED_POSITION(5), "
+            f"DXL ID {self.dxl_id}: Mode=CURRENT(0), "
             f"TempLimit={self.temp_limit_degC}°C, "
-            f"CurrentLimit={self.current_limit_mA:.1f} mA, "
-            f"ROM=[{self.rom_flexion_deg}, {self.rom_extension_deg}] deg, "
-            f"ProfileVel={self.profile_velocity}, ProfileAcc={self.profile_acceleration}"
+            f"CurrentLimit={self.current_limit_mA:.1f} mA"
         )
 
-    # ---------------- ROS callbacks ----------------
+    # -------- ROS callbacks --------
 
     def current_callback(self, msg: Float32):
-        """Store the latest commanded motor current [mA] from controller."""
+        """Store the latest commanded motor current [mA] from the controller."""
         self.last_goal_current_mA = float(msg.data)
 
-    def command_callback(self, msg: Float32):
-        """Store the latest commanded joint angle [deg] from patient_node."""
-        self.last_goal_position_deg = float(msg.data)
+    # -------- Main loop --------
 
     def _update_loop(self):
         """
@@ -229,7 +179,7 @@ class DynamixelCurrentDriver(Node):
         # 1) Write latest current command to DXL
         mA = self.last_goal_current_mA
 
-        # Saturate according to configured limit
+        # Saturate according to configured hardware limit
         if mA > self.current_limit_mA:
             mA = self.current_limit_mA
         elif mA < -self.current_limit_mA:
@@ -238,21 +188,17 @@ class DynamixelCurrentDriver(Node):
         raw_current = int(self._mA_to_raw(mA))
         self._write_2byte(ADDR_GOAL_CURRENT, raw_current)
 
-         # 1b) NEW: Write latest commanded position to Goal Position
-        goal_tick = self._deg_to_tick(self.last_goal_position_deg)
-        self._write_4byte(ADDR_GOAL_POSITION, goal_tick)
-
-        # 2) Read present position and publish
+        # 2) Read present position and publish (so patient_node & safety still work)
         present_tick = self._read_4byte(ADDR_PRESENT_POSITION)
         if present_tick is not None:
             present_deg = self._tick_to_deg(present_tick)
             self.pub_joint.publish(Float32(data=float(present_deg)))
 
-    # ---------------- DXL helpers ----------------
+    # -------- DXL helpers --------
 
     def _write_1byte(self, address: int, value: int):
         dxl_comm_result, dxl_error = self.packet_handler.write1ByteTxRx(
-            self.port_handler, self.dxl_id, address, int(value) & 0xFF                 #  clamp to 0..255 (unsigned 1 byte)
+            self.port_handler, self.dxl_id, address, int(value) & 0xFF
         )
         if dxl_comm_result != COMM_SUCCESS:
             self.get_logger().error(
@@ -267,7 +213,7 @@ class DynamixelCurrentDriver(Node):
 
     def _write_2byte(self, address: int, value: int):
         dxl_comm_result, dxl_error = self.packet_handler.write2ByteTxRx(
-            self.port_handler, self.dxl_id, address, int(value) & 0xFFFF 
+            self.port_handler, self.dxl_id, address, int(value) & 0xFFFF
         )
         if dxl_comm_result != COMM_SUCCESS:
             self.get_logger().error(
@@ -282,7 +228,7 @@ class DynamixelCurrentDriver(Node):
 
     def _write_4byte(self, address: int, value: int):
         dxl_comm_result, dxl_error = self.packet_handler.write4ByteTxRx(
-            self.port_handler, self.dxl_id, address, int(value) 
+            self.port_handler, self.dxl_id, address, int(value) & 0xFFFFFFFF
         )
         if dxl_comm_result != COMM_SUCCESS:
             self.get_logger().error(
@@ -313,7 +259,7 @@ class DynamixelCurrentDriver(Node):
             return None
         return value
 
-    # ---------------- Unit conversions ----------------
+    # -------- Unit conversions --------
 
     @staticmethod
     def _mA_to_raw(mA: float) -> int:
@@ -321,21 +267,9 @@ class DynamixelCurrentDriver(Node):
         Convert current in mA to Dynamixel raw units.
         For X-series, 1 unit ≈ 2.69 mA, 2047 ≈ 5.5 A.
         """
-        # Clamp just in case
         mA_clamped = max(-5500.0, min(5500.0, mA))
         raw = int(round(mA_clamped * (2047.0 / 5500.0)))
         return raw
-
-    def _deg_to_tick(self, deg: float) -> int:
-        """
-        Map controller angle [deg] to Dynamixel position tick.
-        0 deg → center_tick (default 2048) so [-180, +180] maps into [0, 4095].
-        (Not used in this node but kept for completeness.)
-        """
-        tick = self.center_tick + deg * TICKS_PER_DEG
-        tick_int = int(round(tick))
-        tick_int = max(DXL_MIN_POS_TICK, min(DXL_MAX_POS_TICK, tick_int))
-        return tick_int
 
     def _tick_to_deg(self, tick: int) -> float:
         """
@@ -344,7 +278,9 @@ class DynamixelCurrentDriver(Node):
         """
         return (int(tick) - self.center_tick) * DEG_PER_TICK
 
-    # ---------------- Shutdown ----------------
+    # (deg_to_tick not strictly needed here, but you can add it if you like)
+
+    # -------- Shutdown --------
 
     def shutdown(self):
         """Cleanly disable torque and close the port."""
@@ -357,14 +293,12 @@ class DynamixelCurrentDriver(Node):
                 self.port_handler.closePort()
         except Exception:
             pass
-        self.get_logger().info(
-            "Dynamixel CURRENT driver shut down (torque disabled, port closed)."
-        )
+        self.get_logger().info("Dynamixel TORQUE driver shut down (torque disabled, port closed).")
 
 
 def main(args=None):
     rclpy.init(args=args)
-    node = DynamixelCurrentDriver()
+    node = DynamixelTorqueDriver()
     try:
         rclpy.spin(node)
     except KeyboardInterrupt:

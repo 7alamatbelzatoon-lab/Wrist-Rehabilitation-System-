@@ -2,10 +2,13 @@
 /home/anas/ros2_ws/install/patient_engine/lib/python3.12/site-packages/patient_engine/nodes/patient_node.py
 /home/anas/ros2_ws/install/patient_engine/lib/python3.12/site-packages/patient_engine/nodes/__init__.py
 /home/anas/ros2_ws/install/patient_engine/lib/python3.12/site-packages/patient_engine/nodes/stack_manager_node.py
+/home/anas/ros2_ws/install/patient_engine/lib/python3.12/site-packages/patient_engine/nodes/drivers/dxl_velocity_driver.py
 /home/anas/ros2_ws/install/patient_engine/lib/python3.12/site-packages/patient_engine/nodes/drivers/dxl_position_driver.py
 /home/anas/ros2_ws/install/patient_engine/lib/python3.12/site-packages/patient_engine/nodes/drivers/dxl_current_driver.py
 /home/anas/ros2_ws/install/patient_engine/lib/python3.12/site-packages/patient_engine/nodes/drivers/patient_current_controller.py
 /home/anas/ros2_ws/install/patient_engine/lib/python3.12/site-packages/patient_engine/nodes/drivers/__init__.py
+/home/anas/ros2_ws/install/patient_engine/lib/python3.12/site-packages/patient_engine/nodes/drivers/patient_velocity_controller.py
+/home/anas/ros2_ws/install/patient_engine/lib/python3.12/site-packages/patient_engine/nodes/drivers/dxl_torque_driver.py
 /home/anas/ros2_ws/install/patient_engine/lib/python3.12/site-packages/patient_engine/nodes/bridges/patient_mqtt_bridge.py
 /home/anas/ros2_ws/install/patient_engine/lib/python3.12/site-packages/patient_engine/nodes/bridges/__init__.py
 /home/anas/ros2_ws/install/patient_engine/lib/python3.12/site-packages/patient_engine/nodes/orchestrator/patient_orchestrator.py
@@ -18,10 +21,13 @@
 /home/anas/ros2_ws/install/patient_engine/lib/python3.12/site-packages/patient_engine/nodes/__pycache__/patient_node.cpython-312.pyc
 /home/anas/ros2_ws/install/patient_engine/lib/python3.12/site-packages/patient_engine/nodes/__pycache__/__init__.cpython-312.pyc
 /home/anas/ros2_ws/install/patient_engine/lib/python3.12/site-packages/patient_engine/nodes/__pycache__/stack_manager_node.cpython-312.pyc
+/home/anas/ros2_ws/install/patient_engine/lib/python3.12/site-packages/patient_engine/nodes/drivers/__pycache__/dxl_velocity_driver.cpython-312.pyc
 /home/anas/ros2_ws/install/patient_engine/lib/python3.12/site-packages/patient_engine/nodes/drivers/__pycache__/dxl_position_driver.cpython-312.pyc
 /home/anas/ros2_ws/install/patient_engine/lib/python3.12/site-packages/patient_engine/nodes/drivers/__pycache__/dxl_current_driver.cpython-312.pyc
 /home/anas/ros2_ws/install/patient_engine/lib/python3.12/site-packages/patient_engine/nodes/drivers/__pycache__/patient_current_controller.cpython-312.pyc
 /home/anas/ros2_ws/install/patient_engine/lib/python3.12/site-packages/patient_engine/nodes/drivers/__pycache__/__init__.cpython-312.pyc
+/home/anas/ros2_ws/install/patient_engine/lib/python3.12/site-packages/patient_engine/nodes/drivers/__pycache__/patient_velocity_controller.cpython-312.pyc
+/home/anas/ros2_ws/install/patient_engine/lib/python3.12/site-packages/patient_engine/nodes/drivers/__pycache__/dxl_torque_driver.cpython-312.pyc
 /home/anas/ros2_ws/install/patient_engine/lib/python3.12/site-packages/patient_engine/nodes/bridges/__pycache__/patient_mqtt_bridge.cpython-312.pyc
 /home/anas/ros2_ws/install/patient_engine/lib/python3.12/site-packages/patient_engine/nodes/bridges/__pycache__/__init__.cpython-312.pyc
 /home/anas/ros2_ws/install/patient_engine/lib/python3.12/site-packages/patient_engine/nodes/orchestrator/__pycache__/patient_orchestrator.cpython-312.pyc
@@ -43,6 +49,8 @@
 /home/anas/ros2_ws/install/patient_engine/lib/python3.12/site-packages/patient_engine-0.1.1-py3.12.egg-info/PKG-INFO
 /home/anas/ros2_ws/install/patient_engine/lib/patient_engine/dxl_current_driver
 /home/anas/ros2_ws/install/patient_engine/lib/patient_engine/dxl_position_driver
+/home/anas/ros2_ws/install/patient_engine/lib/patient_engine/dxl_torque_driver
+/home/anas/ros2_ws/install/patient_engine/lib/patient_engine/dxl_velocity_driver
 /home/anas/ros2_ws/install/patient_engine/lib/patient_engine/motion_detector
 /home/anas/ros2_ws/install/patient_engine/lib/patient_engine/network_detector
 /home/anas/ros2_ws/install/patient_engine/lib/patient_engine/network_detector_scenario_test
@@ -50,4 +58,5 @@
 /home/anas/ros2_ws/install/patient_engine/lib/patient_engine/patient_mqtt_bridge
 /home/anas/ros2_ws/install/patient_engine/lib/patient_engine/patient_node
 /home/anas/ros2_ws/install/patient_engine/lib/patient_engine/patient_orchestrator
+/home/anas/ros2_ws/install/patient_engine/lib/patient_engine/patient_velocity_controller
 /home/anas/ros2_ws/install/patient_engine/lib/patient_engine/stack_manager

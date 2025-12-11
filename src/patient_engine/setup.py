@@ -44,12 +44,25 @@ setup(
             'stack_manager = patient_engine.nodes.stack_manager_node:main',
             #Network Test
             'network_detector_scenario_test = patient_engine.nodes.detectors.network_detector_scenario_test:main',
+
+            #Hardware:
+
             #Position control mode driver Driver
             'dxl_position_driver = patient_engine.nodes.drivers.dxl_position_driver:main',
             #Current control mode driver Driver
             'dxl_current_driver = patient_engine.nodes.drivers.dxl_current_driver:main',
+            #Velocity control mode driver Driver
+            'dxl_velocity_driver = patient_engine.nodes.drivers.dxl_velocity_driver:main',
+            #Force Control
+            'dxl_torque_driver = patient_engine.nodes.drivers.dxl_torque_driver:main',
+
+
             #Current Control
             'patient_current_controller = patient_engine.nodes.drivers.patient_current_controller:main',
+            #Velocity Control
+            'patient_velocity_controller = patient_engine.nodes.drivers.patient_velocity_controller:main',
+
+
         ],
     },
 )

@@ -95,6 +95,7 @@ class DynamixelCurrentDriver(Node):
         self.current_limit_mA = float(self.get_parameter("current_limit_mA").value)
         self.rom_flexion_deg = float(self.get_parameter("rom_flexion_deg").value)
         self.rom_extension_deg = float(self.get_parameter("rom_extension_deg").value)
+        self.last_goal_position_deg = 0.0
 
         self.get_logger().info(
             f"Starting Dynamixel CURRENT driver on {self.port_name} "
@@ -133,6 +134,14 @@ class DynamixelCurrentDriver(Node):
 
         # ---------------- ROS interfaces ----------------
         self.last_goal_current_mA = 0.0
+
+
+        self.sub_command = self.create_subscription(
+            Float32,
+            "/patient/command_position",
+            self.command_callback,
+            qos_sensorData,
+        )
 
         self.sub_current = self.create_subscription(
             Float32,
@@ -207,6 +216,10 @@ class DynamixelCurrentDriver(Node):
         """Store the latest commanded motor current [mA] from controller."""
         self.last_goal_current_mA = float(msg.data)
 
+    def command_callback(self, msg: Float32):
+        """Store the latest commanded joint angle [deg] from patient_node."""
+        self.last_goal_position_deg = float(msg.data)
+
     def _update_loop(self):
         """
         Periodic loop:
@@ -224,6 +237,10 @@ class DynamixelCurrentDriver(Node):
 
         raw_current = int(self._mA_to_raw(mA))
         self._write_2byte(ADDR_GOAL_CURRENT, raw_current)
+
+         # 1b) NEW: Write latest commanded position to Goal Position
+        goal_tick = self._deg_to_tick(self.last_goal_position_deg)
+        self._write_4byte(ADDR_GOAL_POSITION, goal_tick)
 
         # 2) Read present position and publish
         present_tick = self._read_4byte(ADDR_PRESENT_POSITION)

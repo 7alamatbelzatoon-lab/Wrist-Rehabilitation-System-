@@ -23,7 +23,10 @@ patient_engine/nodes/detectors/network_detector_scenario_test.py
 patient_engine/nodes/drivers/__init__.py
 patient_engine/nodes/drivers/dxl_current_driver.py
 patient_engine/nodes/drivers/dxl_position_driver.py
+patient_engine/nodes/drivers/dxl_torque_driver.py
+patient_engine/nodes/drivers/dxl_velocity_driver.py
 patient_engine/nodes/drivers/patient_current_controller.py
+patient_engine/nodes/drivers/patient_velocity_controller.py
 patient_engine/nodes/orchestrator/__init__.py
 patient_engine/nodes/orchestrator/patient_orchestrator.py
 resource/patient_engine

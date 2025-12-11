@@ -1,6 +1,8 @@
 [console_scripts]
 dxl_current_driver = patient_engine.nodes.drivers.dxl_current_driver:main
 dxl_position_driver = patient_engine.nodes.drivers.dxl_position_driver:main
+dxl_torque_driver = patient_engine.nodes.drivers.dxl_torque_driver:main
+dxl_velocity_driver = patient_engine.nodes.drivers.dxl_velocity_driver:main
 motion_detector = patient_engine.nodes.detectors.motion_detector:main
 network_detector = patient_engine.nodes.detectors.network_detector:main
 network_detector_scenario_test = patient_engine.nodes.detectors.network_detector_scenario_test:main
@@ -8,4 +10,5 @@ patient_current_controller = patient_engine.nodes.drivers.patient_current_contro
 patient_mqtt_bridge = patient_engine.nodes.bridges.patient_mqtt_bridge:main
 patient_node = patient_engine.nodes.patient_node:main
 patient_orchestrator = patient_engine.nodes.orchestrator.patient_orchestrator:main
+patient_velocity_controller = patient_engine.nodes.drivers.patient_velocity_controller:main
 stack_manager = patient_engine.nodes.stack_manager_node:main
