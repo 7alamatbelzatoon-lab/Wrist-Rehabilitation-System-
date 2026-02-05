@@ -6,18 +6,42 @@ from std_msgs.msg import Float32
 import paho.mqtt.client as mqtt
 from rclpy.qos import QoSProfile, HistoryPolicy, ReliabilityPolicy, DurabilityPolicy
 from builtin_interfaces.msg import Duration
+from std_msgs.msg import Empty
+from std_msgs.msg import String
+
+
 
 MQTT_TOPIC_TARGET   = "rehab/target_position"   # doctor -> patient (JSON)
 MQTT_TOPIC_JOINT    = "rehab/joint_position"    # patient -> doctor (float str)
 MQTT_TOPIC_PING     = "rehab/ping"              # doctor -> patient (JSON)
 MQTT_TOPIC_PONG     = "rehab/pong"              # patient -> doctor (JSON echo)
 MQTT_TOPIC_LAT_MS   = "rehab/latency_ms"        # doctor -> patient (float str mirror)
+MQTT_TOPIC_ESTOP  = "rehab/cmd/manual_estop"
+MQTT_TOPIC_SLEEP  = "rehab/cmd/manual_sleep"
+MQTT_TOPIC_CLEAR  = "rehab/cmd/clear"
+MQTT_TOPIC_RESUME = "rehab/cmd/resume"
+MQTT_TOPIC_ORCH_EVENT    = "rehab/orchestrator/event"
+MQTT_TOPIC_MOTION_CAUSE  = "rehab/status/motion"
+MQTT_TOPIC_NETWORK_CAUSE = "rehab/status/network"
+
+
 
 qos_sensorData = QoSProfile(
     history=HistoryPolicy.KEEP_LAST, depth=10,
     reliability=ReliabilityPolicy.RELIABLE,
     durability=DurabilityPolicy.VOLATILE,     # no latching for commands
 )
+qos_edge = QoSProfile(
+    history=HistoryPolicy.KEEP_LAST, depth=1,
+    reliability=ReliabilityPolicy.RELIABLE,
+    durability=DurabilityPolicy.VOLATILE,
+)
+qos_level = QoSProfile(
+    history=HistoryPolicy.KEEP_LAST, depth=1,
+    reliability=ReliabilityPolicy.RELIABLE,
+    durability=DurabilityPolicy.TRANSIENT_LOCAL,
+)
+
 
 class DoctorMQTTBridge(Node):
     """
@@ -33,9 +57,19 @@ class DoctorMQTTBridge(Node):
 
     def __init__(self):
         super().__init__('doctor_mqtt_bridge')
+        self._closing = False
 
         # ROS wiring
         self.sub_target  = self.create_subscription(Float32, '/doctor/target_position', self._ros_target_to_mqtt, qos_sensorData)
+        self.create_subscription(Empty, '/doctor_ui/manual_estop', self._ros_estop_to_mqtt,  qos_edge)
+        self.create_subscription(Empty, '/doctor_ui/manual_sleep', self._ros_sleep_to_mqtt,  qos_edge)
+        self.create_subscription(Empty, '/doctor_ui/clear',        self._ros_clear_to_mqtt,  qos_edge)
+        self.create_subscription(Empty, '/doctor_ui/resume',       self._ros_resume_to_mqtt, qos_edge)
+
+
+        self.pub_orch_event = self.create_publisher(String, '/doctor_ui/orchestrator_event', qos_edge)
+        self.pub_motion     = self.create_publisher(String, '/doctor_ui/motion_anomaly',     qos_level)
+        self.pub_network    = self.create_publisher(String, '/doctor_ui/network_anomaly',    qos_level)
 
         # this variable we use for GUI doictor to display current patient angle recieved no subscribers yet!
         self.pub_haptic  = self.create_publisher(Float32, '/doctor/haptic_ref', qos_sensorData) 
@@ -77,8 +111,15 @@ class DoctorMQTTBridge(Node):
         self.get_logger().info(f"[DoctorMQTTBridge] MQTT connected rc={rc}")
         client.subscribe(MQTT_TOPIC_JOINT, qos=0)
         client.subscribe(MQTT_TOPIC_PONG,  qos=1)
+        client.subscribe(MQTT_TOPIC_ORCH_EVENT,    qos=1)
+        client.subscribe(MQTT_TOPIC_MOTION_CAUSE,  qos=1)
+        client.subscribe(MQTT_TOPIC_NETWORK_CAUSE, qos=1)
+
+        
 
     def _on_mqtt_msg(self, client, userdata, msg):
+        if self._closing or (not rclpy.ok()):
+            return
         if msg.topic == MQTT_TOPIC_JOINT:
             try:
                 v = float(msg.payload.decode())
@@ -101,6 +142,28 @@ class DoctorMQTTBridge(Node):
             # mirror to MQTT so patient can also display/republish it
             self.mqtt.publish(MQTT_TOPIC_LAT_MS, f"{rtt_ms:.3f}", qos=1, retain=False)
             self.get_logger().debug(f"[DoctorMQTTBridge] RTT={rtt_ms:.2f} ms")
+        
+        elif msg.topic == MQTT_TOPIC_ORCH_EVENT:
+            self.pub_orch_event.publish(String(data=msg.payload.decode(errors="ignore")))
+
+        elif msg.topic == MQTT_TOPIC_MOTION_CAUSE:
+            self.pub_motion.publish(String(data=msg.payload.decode(errors="ignore")))
+
+        elif msg.topic == MQTT_TOPIC_NETWORK_CAUSE:
+            self.pub_network.publish(String(data=msg.payload.decode(errors="ignore")))
+
+    
+    def _ros_estop_to_mqtt(self, _msg: Empty):
+        self.mqtt.publish(MQTT_TOPIC_ESTOP, "1", qos=2, retain=False)
+
+    def _ros_sleep_to_mqtt(self, _msg: Empty):
+        self.mqtt.publish(MQTT_TOPIC_SLEEP, "1", qos=1, retain=False)
+
+    def _ros_clear_to_mqtt(self, _msg: Empty):
+        self.mqtt.publish(MQTT_TOPIC_CLEAR, "1", qos=1, retain=False)
+
+    def _ros_resume_to_mqtt(self, _msg: Empty):
+        self.mqtt.publish(MQTT_TOPIC_RESUME, "1", qos=1, retain=False)
 
 
     #  this method is to clear memory
@@ -132,8 +195,25 @@ def main(args=None):
     except KeyboardInterrupt:
         pass
     finally:
-        node.mqtt.loop_stop()
-        node.mqtt.disconnect()
+        node._closing = True
+
+    # stop MQTT callbacks first
+        try:
+            node.mqtt.on_message = None
+            node.mqtt.on_connect = None
+        except Exception:
+            pass
+
+        try:
+            node.mqtt.loop_stop()
+        except Exception:
+            pass
+
+        try:
+            node.mqtt.disconnect()
+        except Exception:
+            pass
+
         node.destroy_node()
         if rclpy.ok():
             rclpy.shutdown()
