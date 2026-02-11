@@ -2,10 +2,12 @@
 /home/anas/ros2_ws/install/doctor_engine/lib/python3.12/site-packages/doctor_engine/nodes/doctor_mqtt_bridge.py
 /home/anas/ros2_ws/install/doctor_engine/lib/python3.12/site-packages/doctor_engine/nodes/doctor_node.py
 /home/anas/ros2_ws/install/doctor_engine/lib/python3.12/site-packages/doctor_engine/nodes/__init__.py
+/home/anas/ros2_ws/install/doctor_engine/lib/python3.12/site-packages/doctor_engine/nodes/doctor_role_manager.py
 /home/anas/ros2_ws/install/doctor_engine/lib/python3.12/site-packages/doctor_engine/__pycache__/__init__.cpython-312.pyc
 /home/anas/ros2_ws/install/doctor_engine/lib/python3.12/site-packages/doctor_engine/nodes/__pycache__/doctor_mqtt_bridge.cpython-312.pyc
 /home/anas/ros2_ws/install/doctor_engine/lib/python3.12/site-packages/doctor_engine/nodes/__pycache__/doctor_node.cpython-312.pyc
 /home/anas/ros2_ws/install/doctor_engine/lib/python3.12/site-packages/doctor_engine/nodes/__pycache__/__init__.cpython-312.pyc
+/home/anas/ros2_ws/install/doctor_engine/lib/python3.12/site-packages/doctor_engine/nodes/__pycache__/doctor_role_manager.cpython-312.pyc
 /home/anas/ros2_ws/install/doctor_engine/share/ament_index/resource_index/packages/doctor_engine
 /home/anas/ros2_ws/install/doctor_engine/share/doctor_engine/package.xml
 /home/anas/ros2_ws/install/doctor_engine/lib/python3.12/site-packages/doctor_engine-0.0.1-py3.12.egg-info/SOURCES.txt

@@ -1,0 +1,226 @@
+#!/usr/bin/env python3
+import rclpy
+from rclpy.node import Node
+from rclpy.qos import QoSProfile, ReliabilityPolicy, DurabilityPolicy, HistoryPolicy
+from std_msgs.msg import Float32
+
+from dynamixel_sdk import PortHandler, PacketHandler, COMM_SUCCESS
+
+# XM540-W270 Protocol 2.0 control table addresses (RAM/EEPROM where applicable)
+ADDR_OPERATING_MODE   = 11
+ADDR_TORQUE_ENABLE    = 64
+ADDR_CURRENT_LIMIT    = 38      # 2 bytes  (mA units ~2.69mA/step)
+ADDR_GOAL_POSITION    = 116     # 4 bytes
+ADDR_PRESENT_POSITION = 132     # 4 bytes
+
+TORQUE_DISABLE = 0
+TORQUE_ENABLE  = 1
+
+OPERATING_MODE_CBPC = 5         # Current-based Position Control Mode
+PROTOCOL_VERSION = 2.0
+
+DXL_MIN_POS_TICK = 0
+DXL_MAX_POS_TICK = 4095
+
+TICKS_PER_REV = 4096.0
+DEG_PER_TICK  = 360.0 / TICKS_PER_REV
+TICKS_PER_DEG = TICKS_PER_REV / 360.0
+
+# XM540 current unit per eManual: about 2.69 mA per unit
+MA_PER_UNIT = 2.69
+
+
+qos_sensor = QoSProfile(
+    history=HistoryPolicy.KEEP_LAST,
+    depth=10,
+    reliability=ReliabilityPolicy.RELIABLE,
+    durability=DurabilityPolicy.VOLATILE,
+)
+
+
+class DoctorDxlCbpcDriver(Node):
+    """
+    Doctor-side Dynamixel driver in CBPC mode.
+    Publishes:   /doctor/joint_position   [deg]
+    Subscribes:  /doctor/goal_position    [deg]
+                /doctor/current_limit_mA  [mA]  (sets Current Limit(38))
+    """
+
+    def __init__(self):
+        super().__init__("doctor_dxl_cbpc_driver")
+
+        # Parameters
+        self.declare_parameter("dxl_id", 1)
+        self.declare_parameter("port_name", "/dev/ttyUSB0")
+        self.declare_parameter("baudrate", 1_000_000)
+        self.declare_parameter("loop_rate_hz", 100.0)
+        self.declare_parameter("center_position_tick", 2048)
+
+        # Safety defaults
+        self.declare_parameter("default_current_limit_mA", 200.0)
+        self.declare_parameter("max_current_limit_mA", 500.0)  # hard clamp
+
+        self.dxl_id = int(self.get_parameter("dxl_id").value)
+        self.port_name = str(self.get_parameter("port_name").value)
+        self.baudrate = int(self.get_parameter("baudrate").value)
+        self.loop_rate_hz = float(self.get_parameter("loop_rate_hz").value)
+        self.center_tick = int(self.get_parameter("center_position_tick").value)
+
+        self.default_I_mA = float(self.get_parameter("default_current_limit_mA").value)
+        self.max_I_mA = float(self.get_parameter("max_current_limit_mA").value)
+
+        # ROS I/O
+        self.pub_pos = self.create_publisher(Float32, "/doctor/joint_position", qos_sensor)
+        self.sub_goal = self.create_subscription(Float32, "/doctor/goal_position", self.cb_goal, qos_sensor)
+        self.sub_ilim = self.create_subscription(Float32, "/doctor/current_limit_mA", self.cb_ilim, qos_sensor)
+
+        self.last_goal_deg = None
+        self.last_goal_tick = None
+
+        self.current_limit_mA = self.default_I_mA
+        self.last_current_limit_units = None
+
+        # DXL SDK
+        self.port_handler = PortHandler(self.port_name)
+        self.packet_handler = PacketHandler(PROTOCOL_VERSION)
+
+        if not self.port_handler.openPort():
+            raise RuntimeError(f"Failed to open port {self.port_name}")
+        if not self.port_handler.setBaudRate(self.baudrate):
+            raise RuntimeError(f"Failed to set baudrate {self.baudrate} on {self.port_name}")
+
+        self.get_logger().info(f"Doctor CBPC driver on {self.port_name} (ID={self.dxl_id}, baud={self.baudrate})")
+
+        self._configure_cbpc()
+
+        period = 1.0 / self.loop_rate_hz if self.loop_rate_hz > 0 else 0.01
+        self.timer = self.create_timer(period, self.tick)
+
+    # ----------------- ROS callbacks -----------------
+
+    def cb_goal(self, msg: Float32):
+        self.last_goal_deg = float(msg.data)
+
+    def cb_ilim(self, msg: Float32):
+        # clamp mA to safe max
+        val = float(msg.data)
+        if val < 0:
+            val = -val
+        self.current_limit_mA = min(val, self.max_I_mA)
+
+    # ----------------- Main loop -----------------
+
+    def tick(self):
+        # 1) Apply current limit if needed
+        self._apply_current_limit(self.current_limit_mA)
+
+        # 2) Apply goal position if provided
+        if self.last_goal_deg is not None:
+            tick = self._deg_to_tick(self.last_goal_deg)
+            if tick != self.last_goal_tick:
+                self._write_4byte(ADDR_GOAL_POSITION, tick)
+                self.last_goal_tick = tick
+
+        # 3) Publish present position
+        ptick = self._read_4byte(ADDR_PRESENT_POSITION)
+        if ptick is not None:
+            pdeg = self._tick_to_deg(ptick)
+            self.pub_pos.publish(Float32(data=float(pdeg)))
+
+    # ----------------- DXL config -----------------
+
+    def _configure_cbpc(self):
+        self._write_1byte(ADDR_TORQUE_ENABLE, TORQUE_DISABLE)
+        self._write_1byte(ADDR_OPERATING_MODE, OPERATING_MODE_CBPC)
+        self._apply_current_limit(self.current_limit_mA, force=True)
+        self._write_1byte(ADDR_TORQUE_ENABLE, TORQUE_ENABLE)
+        self.get_logger().info("Configured XM540 in CBPC (mode 5), torque enabled.")
+
+    def _apply_current_limit(self, mA: float, force: bool = False):
+        # Convert to Dynamixel units (2 bytes, unsigned)
+        units = int(round(max(0.0, mA) / MA_PER_UNIT))
+        units = max(0, min(2047, units))  # XM series range per eManual
+        if (not force) and (units == self.last_current_limit_units):
+            return
+        self._write_2byte(ADDR_CURRENT_LIMIT, units)
+        self.last_current_limit_units = units
+
+    # ----------------- DXL helpers -----------------
+
+    def _write_1byte(self, address: int, value: int):
+        dxl_comm_result, dxl_error = self.packet_handler.write1ByteTxRx(
+            self.port_handler, self.dxl_id, address, int(value)
+        )
+        if dxl_comm_result != COMM_SUCCESS:
+            self.get_logger().error(f"Write1Byte 0x{address:02X} failed: {self.packet_handler.getTxRxResult(dxl_comm_result)}")
+        elif dxl_error != 0:
+            self.get_logger().error(f"Write1Byte 0x{address:02X} err: {self.packet_handler.getRxPacketError(dxl_error)}")
+
+    def _write_2byte(self, address: int, value: int):
+        dxl_comm_result, dxl_error = self.packet_handler.write2ByteTxRx(
+            self.port_handler, self.dxl_id, address, int(value)
+        )
+        if dxl_comm_result != COMM_SUCCESS:
+            self.get_logger().error(f"Write2Byte 0x{address:02X} failed: {self.packet_handler.getTxRxResult(dxl_comm_result)}")
+        elif dxl_error != 0:
+            self.get_logger().error(f"Write2Byte 0x{address:02X} err: {self.packet_handler.getRxPacketError(dxl_error)}")
+
+    def _write_4byte(self, address: int, value: int):
+        dxl_comm_result, dxl_error = self.packet_handler.write4ByteTxRx(
+            self.port_handler, self.dxl_id, address, int(value)
+        )
+        if dxl_comm_result != COMM_SUCCESS:
+            self.get_logger().error(f"Write4Byte 0x{address:02X} failed: {self.packet_handler.getTxRxResult(dxl_comm_result)}")
+        elif dxl_error != 0:
+            self.get_logger().error(f"Write4Byte 0x{address:02X} err: {self.packet_handler.getRxPacketError(dxl_error)}")
+
+    def _read_4byte(self, address: int):
+        value, dxl_comm_result, dxl_error = self.packet_handler.read4ByteTxRx(
+            self.port_handler, self.dxl_id, address
+        )
+        if dxl_comm_result != COMM_SUCCESS:
+            self.get_logger().error(f"Read4Byte 0x{address:02X} failed: {self.packet_handler.getTxRxResult(dxl_comm_result)}")
+            return None
+        if dxl_error != 0:
+            self.get_logger().error(f"Read4Byte 0x{address:02X} err: {self.packet_handler.getRxPacketError(dxl_error)}")
+            return None
+        return value
+
+    # ----------------- Angle conversion -----------------
+
+    def _deg_to_tick(self, deg: float) -> int:
+        tick = self.center_tick + deg * TICKS_PER_DEG
+        tick = int(round(tick))
+        return max(DXL_MIN_POS_TICK, min(DXL_MAX_POS_TICK, tick))
+
+    def _tick_to_deg(self, tick: int) -> float:
+        return (int(tick) - self.center_tick) * DEG_PER_TICK
+
+    # ----------------- Shutdown -----------------
+
+    def destroy_node(self):
+        try:
+            self._write_1byte(ADDR_TORQUE_ENABLE, TORQUE_DISABLE)
+        except Exception:
+            pass
+        try:
+            self.port_handler.closePort()
+        except Exception:
+            pass
+        super().destroy_node()
+
+
+def main(args=None):
+    rclpy.init(args=args)
+    node = DoctorDxlCbpcDriver()
+    try:
+        rclpy.spin(node)
+    except KeyboardInterrupt:
+        pass
+    finally:
+        node.destroy_node()
+        rclpy.shutdown()
+
+
+if __name__ == "__main__":
+    main()
