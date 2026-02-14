@@ -1,3 +1,6 @@
+#This node is to be used with doctor dxl in case of role managing for safety protocol
+
+
 #!/usr/bin/env python3
 import rclpy
 from rclpy.node import Node

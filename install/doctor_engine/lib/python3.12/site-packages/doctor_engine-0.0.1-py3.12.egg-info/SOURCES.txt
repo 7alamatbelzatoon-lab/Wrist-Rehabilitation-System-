@@ -13,6 +13,7 @@ doctor_engine/nodes/__init__.py
 doctor_engine/nodes/doctor_mqtt_bridge.py
 doctor_engine/nodes/doctor_node.py
 doctor_engine/nodes/doctor_role_manager.py
+doctor_engine/nodes/dxl_doctor_haptic_driver.py
 resource/doctor_engine
 test/test_copyright.py
 test/test_flake8.py
